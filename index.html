@@ -487,8 +487,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     </div>
   </div>
   <div class="setting-group">
-    <div class="label">正文字号 <span class="range-val" id="sizeVal">16px</span></div>
-    <input type="range" id="sizeSlider" min="14" max="20" step="1" value="16">
+    <div class="label">正文字号（全站含导航） <span class="range-val" id="sizeVal">17px</span></div>
+    <input type="range" id="sizeSlider" min="15" max="22" step="1" value="17">
   </div>
   <div class="setting-group">
     <div class="label">页面背景</div>
@@ -1470,7 +1470,7 @@ const ACCENTS=[
   {id:'seafoam',color:'#4A8B7B'}
 ];
 function getSettings(){
-  try{ return Object.assign({accent:'ocean',font:'serif',size:'medium',theme:document.documentElement.getAttribute('data-theme')||'light'}, JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}')) }
+  try{ return Object.assign({accent:'ocean',font:'serif',size:'medium',bodySize:17,theme:document.documentElement.getAttribute('data-theme')||'light'}, JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}')) }
   catch(e){ return {accent:'ocean',font:'serif',size:'medium',theme:'light'} }
 }
 function applySettings(s){
@@ -1656,7 +1656,7 @@ const sizeSlider=$('#sizeSlider');
 function applyBodySize(px){
   var st=document.getElementById('userFontSize');
   if(!st){st=document.createElement('style');st.id='userFontSize';document.head.appendChild(st);}
-  st.textContent='body,p,li,.view,.post-card,.work-card,.qa-item,.about-page,.post-detail,.post-content,.card-desc,.hero-sub,.history-item,.security-item{font-size:'+px+'px}';
+  st.textContent='body,body p,body li,body span,body div,body a,body input,body textarea,body button,body label,body td,body th,body h4,body h5,body code,body pre{font-size:'+px+'px !important}';
   $('#sizeVal').textContent=px+'px';
   if(sizeSlider&&String(sizeSlider.value)!==String(px))sizeSlider.value=px;
 }
