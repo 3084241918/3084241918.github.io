@@ -1668,28 +1668,62 @@ $('#feedbackForm').addEventListener('submit',function(e){
   const c=$('#fbContent').value.trim();
   if(c.length<5){ $('#fbContentErr').textContent='请至少写 5 个字'; return }
   let fb=[]; try{fb=JSON.parse(localStorage.getItem('fb_feedback')||'[]')}catch(e){}
-  fb.push({type:$('#fbType').value,content:c,contact:$('#fbContact').value,files:fbFiles.length,ts:Date.now()});
+  const rec={id:'fb_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),type:$('#fbType').value,content:c,contact:$('#fbContact').value,files:fbFiles.length,ts:Date.now()};
+  fb.push(rec);
   localStorage.setItem('fb_feedback',JSON.stringify(fb));
   if(FEEDBACK_EMAIL){
-    try{
-      fetch('https://formsubmit.co/ajax/'+FEEDBACK_EMAIL,{
-        method:'POST',
-        headers:{'Content-Type':'application/json','Accept':'application/json'},
-        body:JSON.stringify({
-          _subject:'博客收到新反馈：'+$('#fbType').value,
-          反馈类型:$('#fbType').value,
-          详细内容:c,
-          联系方式:$('#fbContact').value||'未填写',
-          附件数量:fbFiles.length,
-          提交时间:new Date().toLocaleString('zh-CN')
-        })
-      }).catch(function(){});
-    }catch(err){}
+    fetch('https://formsubmit.co/ajax/'+FEEDBACK_EMAIL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({
+        _captcha:'false',
+        _template:'table',
+        _subject:'博客收到新反馈：'+rec.type+'（'+rec.id+'）',
+        反馈编号:rec.id,
+        反馈类型:rec.type,
+        详细内容:c,
+        联系方式:rec.contact||'未填写',
+        附件数量:fbFiles.length,
+        提交时间:new Date().toLocaleString('zh-CN')
+      })
+    }).then(r=>r.json()).then(d=>{
+      if(d&&(d.success==='true'||d.success===true)) toast('已发送到博主邮箱，感谢反馈！');
+      else toast('反馈已保存，邮件通道激活后自动送达');
+    }).catch(function(){ toast('反馈已保存到本地，邮件通道暂不可用'); });
   }
-  toast('感谢反馈！我们会认真看的');
+  toast('感谢反馈！已记录在个人中心「我的反馈」');
   $('#feedbackModal').classList.remove('show');
   this.reset(); fbFiles=[]; $('#fbPreview').innerHTML='';
+  if($('#view-profile').classList.contains('active')) renderProfile();
 });
+/* ============ 我的反馈记录（含博主回复） ============ */
+window._fbReplies={};
+function renderMyFeedback(){
+  const box=document.getElementById('myFeedbackList'); if(!box) return;
+  let fb=[]; try{fb=JSON.parse(localStorage.getItem('fb_feedback')||'[]')}catch(e){}
+  if(!fb.length){ box.innerHTML='<p style="color:var(--ink-faint);font-size:13px;margin:0">还没有提交过反馈，点击导航栏「反馈」按钮可以提建议哦。</p>'; return }
+  box.innerHTML=fb.slice().reverse().map(function(r){
+    const d=new Date(r.ts);
+    const rep=(window._fbReplies&&window._fbReplies[r.id])||'';
+    return '<div style="border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">'
+      +'<span style="background:var(--bg-sub);color:var(--navy);font-size:12px;padding:2px 10px;border-radius:999px">'+r.type+'</span>'
+      +(rep?'<span style="font-size:12px;color:#2e7d32;font-weight:600">已回复</span>':'<span style="font-size:12px;color:var(--ink-faint)">已提交</span>')
+      +'</div>'
+      +'<p style="margin:8px 0 4px;font-size:14px;white-space:pre-wrap;word-break:break-word">'+esc(r.content)+'</p>'
+      +(r.contact?'<div style="font-size:12px;color:var(--ink-faint)">联系方式：'+esc(r.contact)+'</div>':'')
+      +(r.files?'<div style="font-size:12px;color:var(--ink-faint)">附件 '+r.files+' 个</div>':'')
+      +'<div style="font-size:12px;color:var(--ink-faint);margin-top:4px">'+d.toLocaleString('zh-CN')+'</div>'
+      +(rep?'<div style="margin-top:10px;background:rgba(76,175,80,.08);border-left:3px solid #4caf50;padding:8px 12px;border-radius:6px;font-size:13px"><b style="color:#2e7d32">博主回复：</b>'+esc(rep)+'</div>':'')
+      +'</div>';
+  }).join('');
+}
+function loadFbReplies(){
+  fetch('feedback_replies.json?t='+Date.now())
+    .then(function(r){ return r.ok ? r.json() : {} })
+    .then(function(d){ window._fbReplies=d||{}; if(document.getElementById('myFeedbackList')) renderMyFeedback(); })
+    .catch(function(){});
+}
 
 /* ============ 正文字号（持久化 + 全文生效） ============ */
 const sizeSlider=$('#sizeSlider');
@@ -1834,11 +1868,13 @@ function renderProfile(){
     '<div style="margin-top:24px;display:flex;gap:12px;justify-content:flex-end;flex-wrap:wrap"><button class="save-btn" id="pfSave" style="margin:0">保存资料</button><button id="pfLogout" style="background:none;border:1px solid var(--line);color:var(--ink-faint);padding:10px 18px;border-radius:8px;cursor:pointer;font-size:13px;transition:all .15s;white-space:nowrap">退出登录</button></div>'+
     '</div>';
 
-  // 右栏：统计卡片 + 图表 + 近 7 天阅读 + 浏览历史（贴在可视化展板下方）
+  // 右栏：统计卡片 + 图表 + 近 7 天阅读 + 浏览历史 + 我的反馈
   const us=$('#userStats');
   if(us) us.innerHTML=renderUserStats()+
     '<div style="background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:24px"><h3 style="font-family:var(--serif);color:var(--navy);margin-bottom:12px">近 7 天阅读</h3>'+chartHtml+'</div>'+
-    '<div style="background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:24px"><h3 style="font-family:var(--serif);color:var(--navy);margin-bottom:12px">浏览历史</h3>'+hisHtml+'</div>';
+    '<div style="background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:24px"><h3 style="font-family:var(--serif);color:var(--navy);margin-bottom:12px">浏览历史</h3>'+hisHtml+'</div>'+
+    '<div style="background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:24px"><h3 style="font-family:var(--serif);color:var(--navy);margin-bottom:12px">我的反馈</h3><div id="myFeedbackList"></div></div>';
+  renderMyFeedback(); loadFbReplies();
 
   // 初始化已选值
   if(cur.gender) $('#pfGender').value=cur.gender;
