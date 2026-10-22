@@ -406,8 +406,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     </button>
     <div id="loginArea"></div>
     <button class="nav-cta" id="writeBtn">写文章</button>
-    <button class="icon-btn" id="writeBtn" title="写文章" style="font-weight:700">✏</button>
-    <button class="icon-btn" id="feedbackBtn" title="意见反馈"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
+    <button class="icon-btn" id="feedbackBtn" title="意见反馈" style="width:auto;padding:0 12px;gap:5px;font-size:13px;font-weight:500"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>反馈</button>
     <button class="icon-btn nav-burger" id="burgerBtn">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
     </button>
@@ -475,16 +474,35 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <div class="color-dots" id="colorDots"></div>
   </div>
   <div class="setting-group">
-    <div class="label">标题字体</div>
-    <div class="option-row" id="fontOptions">
-      <span class="option-chip" data-font="serif">宋体</span>
-      <span class="option-chip" data-font="sans">黑体</span>
-      <span class="option-chip" data-font="mono">等宽</span>
+    <div class="label">全站字体（标题与正文一起换）</div>
+    <div class="option-row" id="fontAllOptions" style="flex-wrap:wrap">
+      <span class="option-chip" data-fk="simsun">宋体</span>
+      <span class="option-chip" data-fk="simhei">黑体</span>
+      <span class="option-chip" data-fk="kaiti">楷体</span>
+      <span class="option-chip" data-fk="fangsong">仿宋</span>
+      <span class="option-chip" data-fk="yahei">雅黑</span>
+      <span class="option-chip" data-fk="nsimsun">新宋</span>
+      <span class="option-chip" data-fk="georgia">Georgia</span>
+      <span class="option-chip" data-fk="mono">等宽</span>
     </div>
   </div>
   <div class="setting-group">
     <div class="label">正文字号 <span class="range-val" id="sizeVal">16px</span></div>
     <input type="range" id="sizeSlider" min="14" max="20" step="1" value="16">
+  </div>
+  <div class="setting-group">
+    <div class="label">页面背景</div>
+    <div class="option-row" id="bgOptions" style="flex-wrap:wrap">
+      <span class="option-chip" data-bg="none">默认</span>
+      <span class="option-chip" data-bg="g1">晨曦</span>
+      <span class="option-chip" data-bg="g2">薄荷</span>
+      <span class="option-chip" data-bg="g3">薰衣草</span>
+      <span class="option-chip" data-bg="g4">蜜桃</span>
+      <span class="option-chip" data-bg="g5">海蓝</span>
+      <span class="option-chip" data-bg="g6">宣纸</span>
+      <span class="option-chip" id="bgUploadChip">上传图片…</span>
+      <input type="file" id="bgFile" accept="image/*" hidden>
+    </div>
   </div>
   <div class="setting-group">
     <div class="label">账户安全</div>
@@ -580,6 +598,20 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   </div>
 </div>
 
+<!-- AI 智能助手 -->
+<button id="aiChatBtn" title="AI 智能助手" style="position:fixed;right:24px;bottom:84px;width:46px;height:46px;border-radius:50%;border:none;background:var(--amber);color:#fff;font-size:20px;cursor:pointer;box-shadow:var(--shadow-hover);z-index:95;display:grid;place-items:center">✦</button>
+<div id="aiChatPanel" style="position:fixed;right:24px;bottom:142px;width:350px;max-width:calc(100vw - 48px);height:460px;max-height:70vh;background:var(--bg-elev);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-hover);z-index:250;display:none;flex-direction:column;overflow:hidden">
+  <div style="padding:12px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+    <div><div style="font-family:var(--serif);font-weight:900;color:var(--navy);font-size:15px">智能助手 · 小晴</div><div style="font-size:11.5px;color:var(--ink-faint);margin-top:2px">AI 驱动，可以问我前端 / Python / 数据相关问题</div></div>
+    <span id="aiChatClose" style="cursor:pointer;color:var(--ink-faint);font-size:16px;padding:2px 4px;flex-shrink:0">✕</span>
+  </div>
+  <div id="aiMsgs" style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px"></div>
+  <div style="display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line)">
+    <input id="aiInput" type="text" placeholder="问我点什么…" style="flex:1;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-size:13.5px;outline:none">
+    <button id="aiSend" class="nav-cta" style="padding:9px 16px;font-size:13px;white-space:nowrap">发送</button>
+  </div>
+</div>
+
 <!-- 反馈弹窗 -->
 <div class="modal-mask" id="feedbackModal">
   <div class="modal">
@@ -625,7 +657,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <section class="hero">
     <div class="hero-eyebrow">Frontend Notes · 第 47 期</div>
     <h1>把浏览器里的每一行代码，<br>写成<span id="typeTarget"></span><span class="type-cursor"></span></h1>
-    <p class="hero-sub">一个前端工程师的自留地：CSS 布局、React 原理、Vite 构建、浏览器渲染——不堆术语，只讲我真正踩过的坑。</p>
+    <p class="hero-sub">探索路上的自留地：网页制作、代码调试、数据整理 —— 不堆术语，只讲我真正踩过的坑。</p>
     <div class="hero-meta">
       <span>已发布 <b id="statPosts">--</b> 篇</span>
       <span>分类 <b id="statCats">--</b> 个</span>
@@ -695,7 +727,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 
     <a class="work-hero" href="https://blog.csdn.net/2601_96964027?type=blog" target="_blank" rel="noopener">
       <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
-        <div style="width:64px;height:64px;border-radius:14px;background:var(--amber);display:grid;place-items:center;font-family:var(--serif);font-weight:900;font-size:26px;color:#fff;flex-shrink:0">枫</div>
+        <div style="width:64px;height:64px;border-radius:14px;background:var(--amber);display:grid;place-items:center;font-family:var(--serif);font-weight:900;font-size:26px;color:#fff;flex-shrink:0">晴</div>
         <div style="flex:1;min-width:200px">
           <div style="font-family:var(--serif);font-weight:900;font-size:22px;margin-bottom:4px">晴天遇见枫 · CSDN 博客</div>
           <div style="font-size:13.5px;opacity:.85">Python / FastAPI / 学习笔记 · 2026 年 9 月开始创作</div>
@@ -757,9 +789,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
   <div class="about-page">
     <h1>关于我</h1>
     <p>你好，我是这篇博客的作者。</p>
-    <p>一名财务管理专业的大四学生，同时热爱前端开发与数字内容创作。</p>
-    <p>最开始搭建这个博客，只是用来存放自己的学习笔记、项目踩坑记录，整理网页开发、Python、数据处理、竞赛作品的复盘。慢慢发现，把遇到的问题和解决方案写下来，既能巩固自己学到的东西，也希望可以帮到同样在摸索路上的小伙伴。</p>
-    <p>在这里你会看到：前端网页开发记录、Excel &amp; 数据处理技巧、竞赛项目复盘、学习成长碎碎念，偶尔也会分享自己踩过的坑。</p>
+    <p>一名财务管理大四学生，一边深耕财会与数据，一边学习前端。</p>
+    <p>最开始搭建这个博客，只是用来存放自己的学习笔记、项目踩坑记录，整理网页开发、Python、数据处理的复盘。慢慢发现，把遇到的问题和解决方案写下来，既能巩固自己学到的东西，也希望可以帮到同样在摸索路上的小伙伴。</p>
+    <p>在这里你会看到：前端网页开发记录、数据工具实操、学习成长碎碎念，偶尔也会分享自己踩过的坑。</p>
     <p>博客里所有代码、文案你都可以自由参考使用，欢迎一起交流。</p>
   </div>
 </section>
@@ -1265,7 +1297,7 @@ function observePosts(){
 }
 
 /* ============ 打字机 ============ */
-const TYPE_WORDS = ['可复用的笔记。','看得见的成长。','跨界的浪漫。','解决问题的答案。','项目的碎片。','能读懂的故事。','竞赛里的光芒。','慢慢打磨的作品。','往后的底气。'];
+const TYPE_WORDS = ['能被人读懂的笔记。','前端的复利。','可复用的笔记。','看得见的成长。','跨界的浪漫。','解决问题的答案。','项目的碎片。','能读懂的故事。','竞赛里的光芒。','慢慢打磨的作品。','往后的底气。'];
 let typeIdx = 0, charIdx = 0, deleting = false;
 function typeLoop(){
   var el = document.getElementById('typeTarget');
@@ -1408,7 +1440,9 @@ function renderLoginArea(){
   const cur=getCurrent();
   const box=$('#loginArea');
   if(cur){
-    box.innerHTML='<div style="display:flex;align-items:center;gap:6px"><div class="user-chip" id="userChip"><div class="avatar">'+cur.name[0].toUpperCase()+'</div><span style="font-size:14px">'+cur.name+'</span></div><button id="logoutBtn" title="退出登录" style="background:none;border:none;cursor:pointer;color:var(--ink-faint);font-size:16px;padding:4px 6px;border-radius:6px">⏻</button></div>';
+    var nm=cur.name;
+    var nameHtml=nm.length>3?nm.slice(0,2)+'<br>'+nm.slice(2):nm;
+    box.innerHTML='<div style="display:flex;align-items:center;gap:6px"><div class="user-chip" id="userChip"><div class="avatar">'+nm[0].toUpperCase()+'</div><span style="font-size:13px;line-height:1.25;text-align:center;white-space:nowrap">'+nameHtml+'</span></div><button id="logoutBtn" title="退出登录" style="background:none;border:none;cursor:pointer;color:var(--ink-faint);font-size:16px;padding:4px 6px;border-radius:6px">⏻</button></div>';
     $('#userChip').addEventListener('click',function(){ location.hash='#/profile'; });
     $('#logoutBtn').addEventListener('click',function(e){ e.stopPropagation(); if(confirm('要退出登录吗？')){ setCurrent(null); renderLoginArea(); toast('已退出登录') } });
   }else{
@@ -1449,6 +1483,9 @@ function applySettings(s){
   $$('#fontOptions .option-chip').forEach(c=>c.classList.toggle('active',c.dataset.font===s.font));
   $$('#sizeOptions .option-chip').forEach(c=>c.classList.toggle('active',c.dataset.size===s.size));
   $$('#themeOptions .option-chip').forEach(c=>c.classList.toggle('active',c.dataset.theme===s.theme));
+  if(s.fontAll)applyFontAll(s.fontAll);
+  if(s.bodySize)applyBodySize(s.bodySize);
+  if(s.bg)applyBackground(s.bg);
 }
 function saveSettings(){ localStorage.setItem(SETTINGS_KEY,JSON.stringify(getSettings())) }
 
@@ -1457,10 +1494,6 @@ $('#colorDots').innerHTML = ACCENTS.map(a=>'<div class="color-dot" data-accent="
 $('#colorDots').addEventListener('click',function(e){
   const d=e.target.closest('.color-dot'); if(!d) return;
   const s=getSettings(); s.accent=d.dataset.accent; applySettings(s); saveSettings();
-});
-$('#fontOptions').addEventListener('click',function(e){
-  const c=e.target.closest('.option-chip'); if(!c) return;
-  const s=getSettings(); s.font=c.dataset.font; applySettings(s); saveSettings();
 });
 // size options removed, using slider
 $('#themeOptions').addEventListener('click',function(e){
@@ -1618,11 +1651,86 @@ $('#feedbackForm').addEventListener('submit',function(e){
   this.reset(); fbFiles=[]; $('#fbPreview').innerHTML='';
 });
 
-/* ============ 字号滑块 ============ */
+/* ============ 正文字号（持久化 + 全文生效） ============ */
 const sizeSlider=$('#sizeSlider');
+function applyBodySize(px){
+  var st=document.getElementById('userFontSize');
+  if(!st){st=document.createElement('style');st.id='userFontSize';document.head.appendChild(st);}
+  st.textContent='body,p,li,.view,.post-card,.work-card,.qa-item,.about-page,.post-detail,.post-content,.card-desc,.hero-sub,.history-item,.security-item{font-size:'+px+'px}';
+  $('#sizeVal').textContent=px+'px';
+  if(sizeSlider&&String(sizeSlider.value)!==String(px))sizeSlider.value=px;
+}
 sizeSlider.addEventListener('input',function(){
-  document.body.style.fontSize=this.value+'px';
-  $('#sizeVal').textContent=this.value+'px';
+  applyBodySize(this.value);
+  const s=getSettings(); s.bodySize=parseInt(this.value,10); localStorage.setItem(SETTINGS_KEY,JSON.stringify(s));
+});
+
+/* ============ 全站字体 ============ */
+const FONT_STACKS={
+  simsun:'SimSun,"Songti SC",serif',
+  simhei:'SimHei,"Heiti SC",sans-serif',
+  kaiti:'KaiTi,"Kaiti SC",STKaiti,serif',
+  fangsong:'FangSong,"FangSong_GB2312",STFangsong,serif',
+  yahei:'"Microsoft YaHei","PingFang SC",sans-serif',
+  nsimsun:'NSimSun,"Songti SC",serif',
+  georgia:'Georgia,"Times New Roman",serif',
+  mono:'Consolas,"Courier New",monospace'
+};
+function applyFontAll(key){
+  const st=FONT_STACKS[key]||FONT_STACKS.simsun;
+  document.body.style.fontFamily=st;
+  document.documentElement.style.setProperty('--serif',st);
+  $$('#fontAllOptions .option-chip').forEach(c=>c.classList.toggle('active',c.dataset.fk===key));
+}
+$('#fontAllOptions').addEventListener('click',function(e){
+  const c=e.target.closest('.option-chip'); if(!c)return;
+  applyFontAll(c.dataset.fk);
+  const s=getSettings(); s.fontAll=c.dataset.fk; localStorage.setItem(SETTINGS_KEY,JSON.stringify(s));
+});
+
+/* ============ 页面背景 ============ */
+const BG_PRESETS={
+  g1:'linear-gradient(135deg,#ffe8d6 0%,#ffd6e0 100%)',
+  g2:'linear-gradient(135deg,#d8f3dc 0%,#cfe9f7 100%)',
+  g3:'linear-gradient(135deg,#e9d8fd 0%,#d3e4fd 100%)',
+  g4:'linear-gradient(135deg,#ffdab9 0%,#fff3c9 100%)',
+  g5:'linear-gradient(135deg,#c9e7ff 0%,#d9fff0 100%)',
+  g6:'repeating-linear-gradient(45deg,#f7f3ea 0 16px,#efe8d8 16px 32px)'
+};
+function applyBackground(bg){
+  var layer=document.getElementById('bgLayer');
+  if(!layer){layer=document.createElement('div');layer.id='bgLayer';layer.style.cssText='position:fixed;inset:0;z-index:-1;pointer-events:none';document.body.prepend(layer);}
+  if(!bg||bg.type==='none'){layer.style.background='';layer.style.opacity='';}
+  else if(bg.type==='preset'){layer.style.background=BG_PRESETS[bg.id]||'';layer.style.opacity='0.55';}
+  else{layer.style.background='url("'+bg.data+'") center/cover no-repeat fixed';layer.style.opacity='0.22';}
+  $$('#bgOptions .option-chip[data-bg]').forEach(c=>c.classList.toggle('active',!!bg&&((bg.type==='none'&&c.dataset.bg==='none')||(bg.type==='preset'&&c.dataset.bg===bg.id))));
+}
+$('#bgOptions').addEventListener('click',function(e){
+  const c=e.target.closest('.option-chip'); if(!c)return;
+  if(c.id==='bgUploadChip'){ $('#bgFile').click(); return }
+  const s=getSettings();
+  s.bg = c.dataset.bg==='none' ? {type:'none'} : {type:'preset',id:c.dataset.bg};
+  localStorage.setItem(SETTINGS_KEY,JSON.stringify(s));
+  applyBackground(s.bg);
+});
+$('#bgFile').addEventListener('change',function(){
+  const f=this.files[0]; if(!f)return;
+  const r=new FileReader();
+  r.onload=function(ev){
+    const img=new Image();
+    img.onload=function(){
+      const max=1400, sc=Math.min(1,max/img.width);
+      const cv=document.createElement('canvas'); cv.width=Math.round(img.width*sc); cv.height=Math.round(img.height*sc);
+      cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
+      const data=cv.toDataURL('image/jpeg',0.8);
+      const s=getSettings(); s.bg={type:'custom',data:data};
+      try{ localStorage.setItem(SETTINGS_KEY,JSON.stringify(s)); applyBackground(s.bg); toast('背景已更新'); }
+      catch(err){ toast('图片太大啦，换一张小点的试试'); }
+    };
+    img.src=ev.target.result;
+  };
+  r.readAsDataURL(f);
+  this.value='';
 });
 
 /* ============ 个人中心 ============ */
@@ -1726,29 +1834,125 @@ renderLoginArea=function(){ _origLogin(); refreshSecurity(); };
 // 双重验证开关
 $('#twoFactor').addEventListener('click',function(){ this.classList.toggle('on'); toast(this.classList.contains('on')?'双重验证已开启':'双重验证已关闭'); });
 
+// 问答
+const QA_DEFAULTS=[
+  {q:'CSS Grid 和 Flexbox 到底怎么选？',answers:['一维布局用 Flexbox，二维布局用 Grid。导航栏、居中对齐、行内排列选 Flexbox；整页栅格、卡片矩阵选 Grid。两者不冲突，经常一起用。','我的经验：能一行摆下的就 Flexbox，需要行列一起控制的就 Grid。','补充：Grid 的 gap 属性现在兼容性很好，可以放心用。'],ts:'2026-10-18'},
+  {q:'Vite 为什么比 Webpack 快？',answers:['开发环境用原生 ESM，不需要打包，浏览器请求哪个模块就编译哪个。Webpack 要先把整个 bundle 打出来再启动，项目越大越慢。'],ts:'2026-10-19'},
+  {q:'React 18 的并发特性有什么实际用？',answers:['startTransition 把非紧急更新标记为可中断，输入框不卡顿。','useDeferredValue 让搜索结果延迟渲染，不阻塞输入。'],ts:'2026-10-20'}
+];
+function getQAList(){
+  const list=getData('fb_qa',QA_DEFAULTS);
+  list.forEach(function(it){ if(!it.answers)it.answers=it.a?[it.a]:[]; });
+  return list;
+}
+function renderQA(){
+  const list=getQAList();
+  $('#qaList').innerHTML=list.map(function(item,i){
+    const ansHtml=item.answers.length
+      ? item.answers.map(function(a){return '<div style="padding:9px 12px;background:var(--bg-sub);border-radius:8px;margin-bottom:8px;line-height:1.7">'+esc(a)+'</div>'}).join('')
+      : '<div style="color:var(--ink-faint);font-size:13px;margin-bottom:8px">还没有回答，抢沙发~</div>';
+    return '<div class="qa-item" data-qi="'+i+'" style="cursor:pointer">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><h4 style="flex:1;margin:0">'+esc(item.q)+'</h4><span class="qa-arrow" style="flex-shrink:0;color:var(--ink-faint);transition:transform .2s;font-size:12px">▼</span></div>'
+      +'<div class="qa-meta">'+item.ts+' · '+item.answers.length+' 个回答 · 点击展开</div>'
+      +'<div class="qa-detail" style="display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:14px">'
+      +ansHtml
+      +'<div style="display:flex;gap:8px;margin-top:6px"><input type="text" class="qa-ans-input" placeholder="写下你的回答…" style="flex:1;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-size:13px"><button class="nav-cta qa-ans-btn" data-ai="'+i+'" style="padding:8px 16px;font-size:13px;white-space:nowrap">回答</button></div>'
+      +'</div></div>';
+  }).join('');
+  $$('#qaList .qa-item').forEach(function(el){
+    el.addEventListener('click',function(e){
+      if(e.target.closest('.qa-ans-input')||e.target.closest('.qa-ans-btn'))return;
+      const d=this.querySelector('.qa-detail');
+      const open=d.style.display==='none';
+      d.style.display=open?'block':'none';
+      this.querySelector('.qa-arrow').style.transform=open?'rotate(180deg)':'';
+    });
+  });
+  $$('#qaList .qa-ans-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      const i=parseInt(this.dataset.ai,10);
+      const input=this.parentElement.querySelector('.qa-ans-input');
+      const v=input.value.trim(); if(!v){toast('先写点回答内容');return}
+      const list=getQAList(); list[i].answers.push(v); setData('fb_qa',list);
+      renderQA();
+      const items=$$('#qaList .qa-item');
+      if(items[i]){items[i].querySelector('.qa-detail').style.display='block';items[i].querySelector('.qa-arrow').style.transform='rotate(180deg)';}
+      toast('回答已发布');
+    });
+  });
+}
+$('#qaSubmit')&&($('#qaSubmit').onclick=()=>{
+  const v=$('#qaInput').value.trim(); if(!v){toast('先写个问题');return}
+  const list=getQAList(); list.unshift({q:v,answers:[],ts:new Date().toISOString().slice(0,10)});
+  setData('fb_qa',list); $('#qaInput').value=''; renderQA(); toast('问题已发布');
+});
+
 try{ renderLoginArea(); }catch(e){ console.error('loginArea',e); }
 try{ applySettings(getSettings()); }catch(e){ console.error('settings',e); }
 try{ navigate(); }catch(e){ console.error('navigate',e); }
 window.addEventListener('load', function(){ setTimeout(typeLoop, 200); });
 
-// 问答
-function renderQA(){
-  const list=getData('fb_qa',[
-    {q:'CSS Grid 和 Flexbox 到底怎么选？',a:'一维布局用 Flexbox，二维布局用 Grid。导航栏、居中对齐、行内排列选 Flexbox；整篇文章栅格、卡片矩阵选 Grid。两个不冲突，经常一起用。',ts:'2026-10-18',ans:3},
-    {q:'Vite 为什么比 Webpack 快？',a:'开发环境用原生 ESM，不需要打包，浏览器请求哪个模块就编译哪个。Webpack 是先把整个 bundle 打出来再启动。生产环境 Vite 用 Rollup 打包， treeshaking 更好。',ts:'2026-10-19',ans:1},
-    {q:'React 18 的并发特性有什么实际用？',a:'startTransition 把非紧急更新标记为可中断，输入框不卡顿；useDeferredValue 让搜索结果延迟渲染不阻塞输入。',ts:'2026-10-20',ans:2}
-  ]);
-  $('#qaList').innerHTML=list.map((item,i)=>'<div class="qa-item" data-qi="'+i+'"><h4>'+esc(item.q)+'</h4><div class="qa-meta">'+item.ts+' · '+item.ans+' 个回答</div><div class="qa-detail" style="display:none;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);font-size:13px;color:var(--ink-soft)">'+(item.a||'还没有回答，抢沙发~')+'</div></div>').join('');
-  $$('#qaList .qa-item').forEach(el=>el.addEventListener('click',function(){
-    const d=this.querySelector('.qa-detail');
-    d.style.display=d.style.display==='none'?'block':'none';
-  }));
-}
-$('#qaSubmit')&&($('#qaSubmit').onclick=()=>{
-  const v=$('#qaInput').value.trim(); if(!v){toast('先写个问题');return}
-  const list=getData('fb_qa',[]); list.unshift({q:v,a:'',ts:new Date().toISOString().slice(0,10),ans:0});
-  setData('fb_qa',list); $('#qaInput').value=''; renderQA(); toast('问题已发布');
-});
+
+/* ============ AI 智能助手（小晴） ============ */
+(function(){
+  var panel=$('#aiChatPanel'),msgs=$('#aiMsgs'),input=$('#aiInput'),history=[];
+  function addMsg(text,who){
+    var d=document.createElement('div');
+    d.style.cssText=(who==='me'
+      ?'align-self:flex-end;background:var(--navy);color:#fff;border-radius:12px 12px 2px 12px'
+      :'align-self:flex-start;background:var(--bg-sub);color:var(--ink);border-radius:12px 12px 12px 2px')
+      +';padding:9px 13px;max-width:85%;font-size:13.5px;line-height:1.65;white-space:pre-wrap;word-break:break-word';
+    d.textContent=text; msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d;
+  }
+  $('#aiChatBtn').addEventListener('click',function(){
+    var show=panel.style.display!=='flex';
+    panel.style.display=show?'flex':'none';
+    if(show&&!msgs.children.length)addMsg('你好呀，我是小晴～这个博客的智能助手。可以问我前端、Python、数据处理的问题，也可以聊聊这个博客哦。','ai');
+    if(show)setTimeout(function(){input.focus()},100);
+  });
+  $('#aiChatClose').addEventListener('click',function(){panel.style.display='none'});
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape')panel.style.display='none' });
+  function localBrain(q){
+    var t=q.toLowerCase();
+    function has(){ for(var i=0;i<arguments.length;i++){ if(q.indexOf(arguments[i])>=0||t.indexOf(arguments[i].toLowerCase())>=0)return true } return false }
+    if(has('你好','在吗','hi','hello','嗨'))return '你好呀～我是小晴，这个博客的智能助手。可以问我关于博主、博客内容、前端、Python、数据处理的问题～';
+    if(has('你是谁','小晴','介绍'))return '我是小晴，「前端札记」的智能助手。博主是一名财务管理大四学生，一边深耕财会与数据，一边学习前端。';
+    if(has('博主','作者','关于'))return '博主是一名财务管理专业的大四学生，热爱前端开发与数字内容创作。这个博客用来存放学习笔记、项目踩坑记录和数据处理复盘，详见"关于"页～';
+    if(has('作品','csdn','博客文章'))return '博主在 CSDN 持续更新学习笔记（Python、FastAPI 等），点顶部导航"作品"可以看到文章列表和阅读、点赞、收藏数据，每天自动同步哦。';
+    if(has('css','布局','flex','grid'))return 'CSS 布局小贴士：一维排列用 Flexbox（导航、居中），二维栅格用 Grid（卡片矩阵）。博客文章里有《CSS Grid 布局完全指南》，去"文章"页看看～';
+    if(has('react'))return 'React 学习建议：先掌握组件与 props/state，再学 hooks（useState/useEffect），18 的并发特性（startTransition）可以后面再啃。';
+    if(has('vite','webpack','构建'))return 'Vite 开发环境用原生 ESM，按需编译所以快；Webpack 要先打整个 bundle。新项目推荐 Vite 起手。';
+    if(has('python','fastapi'))return 'Python 学习路径：基础语法→数据结构（列表/字典）→函数→异常处理→再做小项目。博主的 CSDN 有系列笔记，从 while 循环到 FastAPI 都有～';
+    if(has('excel','数据','财会','财务'))return '数据处理方面：Excel 先练透视表和常用函数（VLOOKUP/XLOOKUP、SUMIFS），进阶可以学 Python 的 pandas，效率翻倍。';
+    if(has('竞赛','比赛'))return '竞赛经验：选题比做题重要，先拆解评分标准；过程文档随手记，复盘时全是素材。博客"问答"区也欢迎交流～';
+    if(has('投稿','交流','联系','反馈'))return '想交流的话：可以去"问答"区提问或回答，也可以点顶部"反馈"给博主留言，博客里所有代码文案都可以自由参考使用～';
+    if(has('字体','背景','主题','设置'))return '点顶部的小齿轮可以打开"个性化设置"：主题色、全站字体（8 种）、正文字号、页面背景（6 款预设 + 自己上传图片）都能调～';
+    return '这个问题我还在学习中～你可以换个问法，或者问我这些：博主介绍、前端学习（CSS/React/Vite）、Python、Excel 数据处理、竞赛经验。也可以去"问答"区留言，博主会来回复的～';
+  }
+  function send(){
+    var q=input.value.trim(); if(!q)return;
+    input.value=''; addMsg(q,'me');
+    var thinking=addMsg('思考中…','ai');
+    var sys='你是中文博客「前端札记」的智能助手小晴。博主是一名财务管理专业的大四学生，热爱前端开发、Python 与数据处理。请用简洁友好、口语化的中文回答，控制在150字以内。';
+    var ctx=history.slice(-4).map(function(h){return '用户：'+h.me+'\n助手：'+h.ai}).join('\n');
+    var prompt=sys+'\n'+ctx+(ctx?'\n':'')+'用户：'+q+'\n助手：';
+    fetch('https://text.pollinations.ai/'+encodeURIComponent(prompt)+'?model=openai')
+      .then(function(r){ if(!r.ok)throw new Error(r.status); return r.text() })
+      .then(function(t){
+        var ans=(t||'').trim();
+        if(!ans||ans.indexOf('Turnstile')>=0||ans.indexOf('error')===0)throw new Error('bad');
+        thinking.textContent=ans;
+        history.push({me:q,ai:ans});
+      })
+      .catch(function(){
+        var ans=localBrain(q);
+        thinking.textContent=ans;
+        history.push({me:q,ai:ans});
+      });
+  }
+  $('#aiSend').addEventListener('click',send);
+  input.addEventListener('keydown',function(e){ if(e.key==='Enter')send() });
+})();
 
 // 注册天数 & 统计图表
 function renderUserStats(){
