@@ -637,7 +637,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <aside class="sidebar">
       <div class="widget">
         <h3>关于我</h3>
-        <p style="font-size:14px;color:var(--ink-soft);line-height:1.75">一枚写了六年前端的工程师，目前在做数据可视化方向。喜欢把复杂的东西写简单。</p>
+        <p style="font-size:14px;color:var(--ink-soft);line-height:1.75">财务管理专业大四在读，热爱前端开发与数字内容创作，在这里记录学习与成长的每一步。</p>
       </div>
       <div class="widget">
         <h3>热门标签</h3>
@@ -704,11 +704,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
       </div>
       <div style="display:flex;gap:36px;margin-top:26px;flex-wrap:wrap">
         <div><div style="font-family:var(--mono);font-size:24px;font-weight:700" id="worksCount">5</div><div style="font-size:12.5px;opacity:.8">原创文章</div></div>
-        <div><div style="font-family:var(--mono);font-size:24px;font-weight:700">894</div><div style="font-size:12.5px;opacity:.8">总访问量</div></div>
-        <div><div style="font-family:var(--mono);font-size:24px;font-weight:700">18</div><div style="font-size:12.5px;opacity:.8">获赞</div></div>
-        <div><div style="font-family:var(--mono);font-size:24px;font-weight:700">26</div><div style="font-size:12.5px;opacity:.8">被收藏</div></div>
+        <div><div style="font-family:var(--mono);font-size:24px;font-weight:700" id="worksViews">–</div><div style="font-size:12.5px;opacity:.8">总阅读量</div></div>
+        <div><div style="font-family:var(--mono);font-size:24px;font-weight:700" id="worksDiggs">–</div><div style="font-size:12.5px;opacity:.8">获赞</div></div>
+        <div><div style="font-family:var(--mono);font-size:24px;font-weight:700" id="worksCollects">–</div><div style="font-size:12.5px;opacity:.8">被收藏</div></div>
       </div>
-      <div style="font-size:11.5px;opacity:.65;margin-top:14px">访问数据为 2026-10-22 快照 · 下方文章列表每天自动与 CSDN 博客同步</div>
+      <div style="font-size:11.5px;opacity:.65;margin-top:14px">统计数据与下方文章列表每日自动与 CSDN 博客同步</div>
     </a>
 
     <h2 style="font-family:var(--serif);font-size:22px;font-weight:900;color:var(--navy);margin-bottom:18px">博客文章 <span id="worksUpdated" style="font-size:13px;font-weight:400;color:var(--ink-faint);font-family:var(--mono)"></span></h2>
@@ -719,23 +719,31 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 <script>
 (function(){
   var FALLBACK={updated:'2026-10-22',articles:[
-    {title:'FastAPI 学习笔记｜搞懂两种接口请求方式',url:'https://blog.csdn.net/2601_96964027/article/details/168026652',date:'2026-10-17',excerpt:'GET 与 POST 接口的核心区别：GET 通过网址传参适合公开查询，POST 隐藏参数更安全且支持大容量数据；附接口设计与调试的踩坑记录。'},
-    {title:'Python 异常处理｜笔记',url:'https://blog.csdn.net/2601_96964027/article/details/166833982',date:'2026-09-30',excerpt:'用 try-except 捕获运行时错误，结合 else 和 finally 实现优雅的错误处理流程，避免裸 except，写出更健壮的程序。'},
-    {title:'Python 学习笔记：自定义函数 def',url:'https://blog.csdn.net/2601_96964027/article/details/166734162',date:'2026-09-27',excerpt:'从定义到调用，带参数与不带参数的函数写法练习，打好函数式编程基础。'},
-    {title:'Python 学习笔记 — 列表 list 的增删改查',url:'https://blog.csdn.net/2601_96964027/article/details/165739879',date:'2026-09-17',excerpt:'列表的增、删、改、查四类核心操作一遍过，Python 最常用数据结构的入门实战。'},
-    {title:'Python 入门｜while 循环：原理干货 + 实战运用练习',url:'https://blog.csdn.net/2601_96964027/article/details/165123636',date:'2026-09-12',excerpt:'初始化、条件判断、变量更新三步法避免死循环，结合素数判断与求和练习巩固循环逻辑，附常见错误复盘。'}
+    {title:'FastAPI 学习笔记｜搞懂两种接口请求方式',url:'https://blog.csdn.net/2601_96964027/article/details/168026652',date:'2026-10-17',excerpt:'GET 与 POST 接口的核心区别：GET 通过网址传参适合公开查询，POST 隐藏参数更安全且支持大容量数据；附接口设计与调试的踩坑记录。',views:276,diggs:4,collects:8},
+    {title:'Python 异常处理｜笔记',url:'https://blog.csdn.net/2601_96964027/article/details/166833982',date:'2026-09-30',excerpt:'用 try-except 捕获运行时错误，结合 else 和 finally 实现优雅的错误处理流程，避免裸 except，写出更健壮的程序。',views:165,diggs:5,collects:4},
+    {title:'Python 学习笔记：自定义函数 def',url:'https://blog.csdn.net/2601_96964027/article/details/166734162',date:'2026-09-27',excerpt:'从定义到调用，带参数与不带参数的函数写法练习，打好函数式编程基础。',views:146,diggs:5,collects:5},
+    {title:'Python 学习笔记 — 列表 list 的增删改查',url:'https://blog.csdn.net/2601_96964027/article/details/165739879',date:'2026-09-17',excerpt:'列表的增、删、改、查四类核心操作一遍过，Python 最常用数据结构的入门实战。',views:53,diggs:2,collects:3},
+    {title:'Python 入门｜while 循环：原理干货 + 实战运用练习',url:'https://blog.csdn.net/2601_96964027/article/details/165123636',date:'2026-09-12',excerpt:'初始化、条件判断、变量更新三步法避免死循环，结合素数判断与求和练习巩固循环逻辑，附常见错误复盘。',views:254,diggs:2,collects:6}
   ]};
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
   function render(data){
     if(!data||!data.articles||!data.articles.length)data=FALLBACK;
     var cnt=document.getElementById('worksCount');if(cnt)cnt.textContent=data.articles.length;
     var up=document.getElementById('worksUpdated');if(up&&data.updated)up.textContent='· 同步于 '+data.updated;
+    var tv=0,td=0,tc=0,has=false;
+    data.articles.forEach(function(a){if(a.views!=null){has=true;tv+=a.views||0;td+=a.diggs||0;tc+=a.collects||0}});
+    if(has){
+      var e1=document.getElementById('worksViews');if(e1)e1.textContent=tv;
+      var e2=document.getElementById('worksDiggs');if(e2)e2.textContent=td;
+      var e3=document.getElementById('worksCollects');if(e3)e3.textContent=tc;
+    }
     document.getElementById('worksList').innerHTML=data.articles.map(function(a){
+      var stats=a.views!=null?'<span> · 阅读 '+a.views+' · 点赞 '+(a.diggs||0)+' · 收藏 '+(a.collects||0)+(a.comments?' · 评论 '+a.comments:'')+'</span>':'';
       return '<a class="work-card" href="'+esc(a.url)+'" target="_blank" rel="noopener">'
         +'<div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start"><div style="min-width:0">'
         +'<h3 class="work-title" style="font-family:var(--serif);font-size:18px;font-weight:700;margin-bottom:6px;line-height:1.5;transition:color .15s">'+esc(a.title)+'</h3>'
         +(a.excerpt?'<p style="font-size:14px;color:var(--ink-soft);line-height:1.7;margin-bottom:10px">'+esc(a.excerpt)+'</p>':'')
-        +'<div style="font-size:12.5px;color:var(--ink-faint);font-family:var(--mono)">'+esc(a.date)+'</div>'
+        +'<div style="font-size:12.5px;color:var(--ink-faint);font-family:var(--mono)">'+esc(a.date)+stats+'</div>'
         +'</div><span style="flex-shrink:0;font-size:12px;color:var(--amber);border:1px solid var(--amber);border-radius:6px;padding:4px 10px;font-weight:500">CSDN ↗</span></div></a>';
     }).join('');
   }
@@ -748,10 +756,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 <section class="view" id="view-about">
   <div class="about-page">
     <h1>关于我</h1>
-    <p>你好，我是这篇博客的作者，一个写了六年前端的工程师。</p>
-    <p>这个博客开始于 2020 年，最初只是我给自己记的学习笔记。后来发现把踩过的坑写下来，既能帮自己复盘，也能帮到搜答案的人，就一直写到了现在。</p>
-    <p>我主要写这些话题：CSS 布局与动画、React 生态、TypeScript、构建工具（Vite / Webpack）、浏览器原理、Node.js 服务端，以及偶尔的工程化思考。</p>
-    <p>如果你想找我，最方便的方式是在 GitHub 或掘金上留言。文章里的代码都可以随便用，不用打招呼。</p>
+    <p>你好，我是这篇博客的作者。</p>
+    <p>一名财务管理专业的大四学生，同时热爱前端开发与数字内容创作。</p>
+    <p>最开始搭建这个博客，只是用来存放自己的学习笔记、项目踩坑记录，整理网页开发、Python、数据处理、竞赛作品的复盘。慢慢发现，把遇到的问题和解决方案写下来，既能巩固自己学到的东西，也希望可以帮到同样在摸索路上的小伙伴。</p>
+    <p>在这里你会看到：前端网页开发记录、Excel &amp; 数据处理技巧、竞赛项目复盘、学习成长碎碎念，偶尔也会分享自己踩过的坑。</p>
+    <p>博客里所有代码、文案你都可以自由参考使用，欢迎一起交流。</p>
   </div>
 </section>
 
@@ -1256,7 +1265,7 @@ function observePosts(){
 }
 
 /* ============ 打字机 ============ */
-const TYPE_WORDS = ['能被人读懂的笔记。','踩过的坑。','前端的复利。'];
+const TYPE_WORDS = ['可复用的笔记。','看得见的成长。','跨界的浪漫。','解决问题的答案。','项目的碎片。','能读懂的故事。','竞赛里的光芒。','慢慢打磨的作品。','往后的底气。'];
 let typeIdx = 0, charIdx = 0, deleting = false;
 function typeLoop(){
   var el = document.getElementById('typeTarget');
