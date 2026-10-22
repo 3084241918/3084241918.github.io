@@ -360,10 +360,23 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 .stat-cell .lbl{font-size:12px;color:var(--ink-faint);margin-top:4px}
 .chart-box{background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
 .chart-box h4{font-size:14px;color:var(--navy);margin-bottom:12px}
-.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px}
-.bar-row .bar-label{width:60px;text-align:right;color:var(--ink-soft)}
-.bar-row .bar-track{flex:1;height:14px;background:var(--bg-sub);border-radius:4px;overflow:hidden}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;font-size:12px}
+.bar-row .bar-label{width:60px;text-align:right;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-row .bar-track{flex:1;height:10px;background:var(--bg-sub);border-radius:4px;overflow:hidden}
 .bar-row .bar-fill{height:100%;background:var(--amber);border-radius:4px;transition:width .6s}
+.chart-tabs{display:flex;gap:6px}
+.chart-tab{font-size:12px;padding:3px 12px;border-radius:999px;border:1px solid var(--line);cursor:pointer;color:var(--ink-soft);transition:all .15s;user-select:none}
+.chart-tab:hover{border-color:var(--amber);color:var(--amber)}
+.chart-tab.active{background:var(--amber);border-color:var(--amber);color:#fff}
+.pie{width:150px;height:150px;border-radius:50%;position:relative;display:grid;place-items:center;flex-shrink:0}
+.pie-hole{width:86px;height:86px;border-radius:50%;background:var(--bg-elev);display:grid;place-items:center;font-family:var(--mono);font-weight:700;font-size:20px;color:var(--navy);line-height:1.1;text-align:center}
+.pie-hole small{font-size:11px;font-weight:400;color:var(--ink-faint)}
+.pie-legend{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-soft)}
+.pie-legend i{width:10px;height:10px;border-radius:3px;display:inline-block;flex-shrink:0}
+.chart-table{width:100%;border-collapse:collapse;font-size:13px}
+.chart-table th,.chart-table td{text-align:left;padding:7px 10px;border-bottom:1px dashed var(--line)}
+.chart-table th{color:var(--navy);font-size:12px}
+.chart-table tr:last-child td{border-bottom:none}
 /* 评论区 */
 .comment-box{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
 .comment-item{padding:10px 0;border-bottom:1px dashed var(--line);font-size:13px}
@@ -601,7 +614,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 </div>
 
 <!-- AI 智能助手 -->
-<button id="aiChatBtn" title="AI 智能助手" style="position:fixed;right:24px;bottom:84px;width:46px;height:46px;border-radius:50%;border:none;background:var(--amber);color:#fff;font-size:20px;cursor:pointer;box-shadow:var(--shadow-hover);z-index:95;display:grid;place-items:center">✦</button>
+<button id="aiChatBtn" title="AI 智能助手 · 小晴" style="position:fixed;right:24px;bottom:84px;border:none;background:var(--amber);color:#fff;font-size:14px;font-weight:700;cursor:pointer;box-shadow:var(--shadow-hover);z-index:95;display:flex;align-items:center;gap:7px;padding:12px 18px;border-radius:999px;letter-spacing:.5px"><span style="font-size:16px">✦</span>小晴</button>
 <div id="aiChatPanel" style="position:fixed;right:24px;bottom:142px;width:350px;max-width:calc(100vw - 48px);height:460px;max-height:70vh;background:var(--bg-elev);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-hover);z-index:250;display:none;flex-direction:column;overflow:hidden">
   <div style="padding:12px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
     <div><div style="font-family:var(--serif);font-weight:900;color:var(--navy);font-size:15px">智能助手 · 小晴</div><div style="font-size:11.5px;color:var(--ink-faint);margin-top:2px">AI 驱动，可以问我前端 / Python / 数据相关问题</div></div>
@@ -671,7 +684,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
     <aside class="sidebar">
       <div class="widget">
         <h3>关于我</h3>
-        <p style="font-size:14px;color:var(--ink-soft);line-height:1.75">财务管理专业大四在读，热爱前端开发与数字内容创作，在这里记录学习与成长的每一步。</p>
+        <p style="font-size:15.5px;color:var(--ink-soft);line-height:1.8">财务管理专业大四在读，热爱前端开发与数字内容创作，在这里记录学习与成长的每一步。</p>
       </div>
       <div class="widget">
         <h3>热门标签</h3>
@@ -801,10 +814,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 
 <!-- ============ 视图：用户中心 ============ -->
 <section class="view" id="view-profile">
-  <div id="userStats"></div>
   <div style="max-width:900px;margin:0 auto;padding:48px 24px 80px">
     <h1 style="font-family:var(--serif);font-size:32px;font-weight:900;color:var(--navy);margin-bottom:8px">个人中心</h1>
     <p style="color:var(--ink-soft)">管理你的资料、浏览历史和阅读统计</p>
+    <div id="userStats"></div>
     <div id="profileContent"></div>
   </div>
 </section>
@@ -1447,9 +1460,8 @@ function renderLoginArea(){
   if(cur){
     var nm=cur.name;
     var nameHtml=nm.length>3?nm.slice(0,2)+'<br>'+nm.slice(2):nm;
-    box.innerHTML='<div style="display:flex;align-items:center;gap:6px"><div class="user-chip" id="userChip"><div class="avatar">'+nm[0].toUpperCase()+'</div><span style="font-size:13px;line-height:1.25;text-align:center;white-space:nowrap">'+nameHtml+'</span></div><button id="logoutBtn" title="退出登录" style="background:none;border:none;cursor:pointer;color:var(--ink-faint);font-size:16px;padding:4px 6px;border-radius:6px">⏻</button></div>';
+    box.innerHTML='<div class="user-chip" id="userChip" title="进入个人中心"><div class="avatar">'+nm[0].toUpperCase()+'</div><span style="font-size:13px;line-height:1.25;text-align:center;white-space:nowrap">'+nameHtml+'</span></div>';
     $('#userChip').addEventListener('click',function(){ location.hash='#/profile'; });
-    $('#logoutBtn').addEventListener('click',function(e){ e.stopPropagation(); if(confirm('要退出登录吗？')){ setCurrent(null); renderLoginArea(); toast('已退出登录') } });
   }else{
     box.innerHTML='<button class="login-btn" id="openLogin">登录</button>';
     $('#openLogin').addEventListener('click',()=>openAuth('login'));
@@ -1781,9 +1793,9 @@ function renderProfile(){
     '<div class="form-row"><label>年龄</label><input type="number" id="pfAge" min="1" max="120" value="'+(cur.age||'')+'"></div>'+
     '<div class="form-row"><label>所在地区</label><select id="pfRegion"><option value="">请选择</option><option>北京</option><option>上海</option><option>广州</option><option>深圳</option><option>杭州</option><option>成都</option><option>重庆</option><option>武汉</option><option>西安</option><option>其他</option></select></div>'+
     '<div class="form-row"><label>兴趣标签（多选）</label><div id="pfTags">'+
-    ['前端','后端','CSS','React','TypeScript','算法','数据库','产品设计','职业发展','读书'].map(t=>'<span class="tag-checkbox" data-tag="'+t+'">'+t+'</span>').join('')+
+    ['前端','后端','CSS','React','TypeScript','算法','数据库','产品设计','职业发展','读书','摄影','旅行','音乐','运动','美食','写作','电影'].map(t=>'<span class="tag-checkbox" data-tag="'+t+'">'+t+'</span>').join('')+
     '</div></div>'+
-    '<button class="save-btn" id="pfSave">保存资料</button>'+
+    '<div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap"><button class="save-btn" id="pfSave" style="margin:0">保存资料</button><button id="pfLogout" style="background:none;border:1px solid var(--line);color:var(--ink-faint);padding:10px 18px;border-radius:8px;cursor:pointer;font-size:13px;transition:all .15s">退出登录</button></div>'+
     '</div></div>'+
     '<div style="margin-top:40px"><h3 style="font-family:var(--serif);color:var(--navy);margin-bottom:12px">近 7 天阅读</h3>'+chartHtml+'</div>'+
     '<div style="margin-top:40px"><h3 style="font-family:var(--serif);color:var(--navy);margin-bottom:12px">浏览历史</h3>'+hisHtml+'</div>';
@@ -1827,6 +1839,9 @@ function renderProfile(){
     saveUsers(users); setCurrent(cur);
     renderLoginArea();
     toast('资料已保存');
+  });
+  $('#pfLogout').addEventListener('click',function(){
+    if(confirm('要退出登录吗？')){ setCurrent(null); renderLoginArea(); toast('已退出登录'); location.hash='#/'; }
   });
 
   // 历史项点击
@@ -1975,20 +1990,38 @@ function renderUserStats(){
   const myPosts=getData('fb_myposts',[]);
   const favs=getFavs();
   const likes=Object.values(getLikes()).reduce((a,b)=>a+b,0);
-  // 分类分布
+  // 分类分布（可切换 条形图 / 饼图 / 表格）
   const catMap={}; POSTS.forEach(p=>catMap[p.cat]=(catMap[p.cat]||0)+1);
-  const maxCat=Math.max(...Object.values(catMap));
-  let bars='';
-  Object.entries(catMap).forEach(([c,n])=>{
-    bars+='<div class="bar-row"><span class="bar-label">'+c+'</span><div class="bar-track"><div class="bar-fill" style="width:'+(n/maxCat*100)+'%"></div></div><span>'+n+'</span></div>';
-  });
+  const entries=Object.entries(catMap).sort((a,b)=>b[1]-a[1]);
+  const total=entries.reduce((a,[,n])=>a+n,0);
+  const type=localStorage.getItem('fb_chartType')||'bar';
+  const names={bar:'条形图',pie:'饼图',table:'表格'};
+  const tabs='<div class="chart-tabs">'+Object.keys(names).map(t=>'<span class="chart-tab'+(t===type?' active':'')+'" data-ct="'+t+'">'+names[t]+'</span>').join('')+'</div>';
+  const colors=['#E8890C','#16324F','#2E7D32','#5E35B1','#C2185B','#00695C','#1565C0','#B0607A'];
+  let body='';
+  if(type==='pie'){
+    let acc=0; const stops=entries.map(([c,n],i)=>{const from=acc/total*360;acc+=n;return colors[i%colors.length]+' '+from.toFixed(1)+'deg '+(acc/total*360).toFixed(1)+'deg'});
+    const legend=entries.map(([c,n],i)=>'<span class="pie-legend"><i style="background:'+colors[i%colors.length]+'"></i>'+esc(c)+' '+n+'</span>').join('');
+    body='<div style="display:flex;align-items:center;gap:26px;flex-wrap:wrap;padding:6px 0"><div class="pie" style="background:conic-gradient('+stops.join(',')+')"><div class="pie-hole">'+total+'<small>篇</small></div></div><div style="display:flex;flex-direction:column;gap:8px">'+legend+'</div></div>';
+  }else if(type==='table'){
+    body='<table class="chart-table"><tr><th>分类</th><th>篇数</th><th>占比</th></tr>'+entries.map(([c,n])=>'<tr><td>'+esc(c)+'</td><td>'+n+'</td><td>'+(n/total*100).toFixed(0)+'%</td></tr>').join('')+'</table>';
+  }else{
+    const maxCat=Math.max(...entries.map(([,n])=>n),1);
+    body=entries.map(([c,n],i)=>'<div class="bar-row"><span class="bar-label">'+esc(c)+'</span><div class="bar-track"><div class="bar-fill" style="width:'+(n/maxCat*100)+'%;background:'+colors[i%colors.length]+'"></div></div><span>'+n+'</span></div>').join('');
+  }
   return '<div class="stat-grid">'+
     '<div class="stat-cell"><div class="num">'+days+'</div><div class="lbl">加入天数</div></div>'+
     '<div class="stat-cell"><div class="num">'+myPosts.length+'</div><div class="lbl">我的文章</div></div>'+
     '<div class="stat-cell"><div class="num">'+favs.length+'</div><div class="lbl">收藏</div></div>'+
     '<div class="stat-cell"><div class="num">'+likes+'</div><div class="lbl">获赞</div></div>'+
-  '</div><div class="chart-box"><h4>文章分类分布</h4>'+bars+'</div>';
+  '</div><div class="chart-box" style="max-width:540px"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap"><h4 style="margin:0">文章分类分布</h4>'+tabs+'</div>'+body+'</div>';
 }
+// 图表类型切换
+document.addEventListener('click',function(e){
+  const t=e.target.closest('.chart-tab'); if(!t)return;
+  localStorage.setItem('fb_chartType',t.dataset.ct);
+  const us=$('#userStats'); if(us) us.innerHTML=renderUserStats();
+});
 
 // 初始化问答
 if(location.hash.startsWith('#/qa')) renderQA();
