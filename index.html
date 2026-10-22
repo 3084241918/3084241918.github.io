@@ -1663,6 +1663,7 @@ function applyBodySize(px){
   if(!st){st=document.createElement('style');st.id='userFontSize';document.head.appendChild(st);}
   var navPx=Math.min(px,16);
   st.textContent='body,body p,body li,body span,body div,body a,body input,body textarea,body button,body label,body td,body th,body h4,body h5,body code,body pre{font-size:'+px+'px !important}'
+    +'body .hero h1,body .hero h1 span{font-size:clamp(32px,5vw,54px) !important}'
     +'body .nav-inner{flex-wrap:nowrap !important;gap:14px !important}'
     +'body .nav-links{flex-wrap:nowrap !important}'
     +'body .nav-links a{font-size:'+navPx+'px !important;padding:8px 10px !important;white-space:nowrap !important}'
