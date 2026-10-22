@@ -1707,24 +1707,73 @@ function renderMyFeedback(){
       +(r.files?'<div style="font-size:12px;color:var(--ink-faint)">附件 '+r.files+' 个</div>':'')
       +'<div style="font-size:12px;color:var(--ink-faint);margin-top:4px">'+d.toLocaleString('zh-CN')+' · 编号 '+r.id+'</div>'
       +(rep?'<div style="margin-top:10px;background:rgba(76,175,80,.08);border-left:3px solid #4caf50;padding:8px 12px;border-radius:6px;font-size:13px"><b style="color:#2e7d32">博主回复：</b>'+esc(rep)+'</div>':'')
+      +(window._fbAdmin?'<div style="margin-top:10px"><textarea id="rep_'+r.id+'" rows="2" style="width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:8px;padding:8px;font-size:13px;font-family:inherit" placeholder="写下你的回复，保存后访客刷新即可看到...">'+esc((window._fbReplies||{})[r.id]||'')+'</textarea><div style="margin-top:6px;text-align:right"><button class="save-btn" data-fbsave="'+r.id+'" style="padding:6px 14px;font-size:12px;margin:0">保存回复</button></div></div>':'')
       +'</div>';
   }).join('');
+  $$('#myFeedbackList [data-fbsave]').forEach(function(b){
+    b.addEventListener('click',function(){
+      const id=b.getAttribute('data-fbsave');
+      const t=document.getElementById('rep_'+id).value.trim();
+      if(!t){ toast('回复内容不能为空'); return }
+      b.disabled=true; b.textContent='保存中...';
+      pushReply(id,t).finally(function(){ b.disabled=false; b.textContent='保存回复'; });
+    });
+  });
 }
 function loadFbReplies(){
   fetch('feedback_replies.txt?t='+Date.now())
     .then(function(r){ return r.ok ? r.text() : '' })
     .then(function(t){
-      const map={};
-      (t||'').split(/\r?\n/).forEach(function(line){
-        line=line.trim();
-        if(!line||line.charAt(0)==='#') return;
-        const i=line.search(/[|｜]/);
-        if(i>0) map[line.slice(0,i).trim()]=line.slice(i+1).trim();
-      });
-      window._fbReplies=map;
+      window._fbReplies=fbParse(t);
       if(document.getElementById('myFeedbackList')) renderMyFeedback();
     })
     .catch(function(){});
+}
+function fbParse(txt){
+  const map={};
+  (txt||'').split(/\r?\n/).forEach(function(line){
+    line=line.trim(); if(!line||line.charAt(0)==='#') return;
+    const i=line.search(/[|｜]/); if(i>0) map[line.slice(0,i).trim()]=line.slice(i+1).trim();
+  });
+  return map;
+}
+function fbSerialize(map){
+  let out='# 博主回复区 —— 每行一条，格式：反馈编号 | 回复内容\n';
+  Object.keys(map).forEach(function(k){ if(map[k]) out+=k+' | '+String(map[k]).replace(/\r?\n/g,' ')+'\n' });
+  return out;
+}
+async function pushReply(id,text){
+  const tok=(localStorage.getItem('fb_ghToken')||'').trim();
+  if(!tok){ toast('请先粘贴并保存 GitHub 令牌'); return false }
+  const api='https://api.github.com/repos/3084241918/3084241918.github.io/contents/feedback_replies.txt';
+  const h={Authorization:'token '+tok,Accept:'application/vnd.github+json'};
+  try{
+    const res=await fetch(api,{headers:h});
+    if(!res.ok){ toast('读取回复文件失败（'+res.status+'），请检查令牌是否有效'); return false }
+    const j=await res.json();
+    let cur=''; try{ cur=decodeURIComponent(escape(atob(j.content.replace(/\s/g,'')))) }catch(e){}
+    const map=fbParse(cur); map[id]=text;
+    const b64=btoa(unescape(encodeURIComponent(fbSerialize(map))));
+    const put=await fetch(api,{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},h),body:JSON.stringify({message:'博主回复 '+id,content:b64,sha:j.sha})});
+    if(put.ok){ window._fbReplies=map; renderMyFeedback(); toast('回复已保存！访客刷新个人中心即可看到'); return true }
+    toast('保存失败（'+put.status+'）'+(put.status===401?'，令牌无效或已过期':''));
+    return false;
+  }catch(err){ toast('网络错误，保存失败，请稍后再试'); return false }
+}
+function toggleAdminFb(){
+  window._fbAdmin=!window._fbAdmin;
+  const bx=$('#fbAdminBox'); if(!bx) return;
+  bx.style.display=window._fbAdmin?'block':'none';
+  if(window._fbAdmin){
+    bx.innerHTML='<div style="font-size:12px;color:var(--ink-faint);margin-bottom:10px;padding:10px 12px;background:var(--bg-sub);border-radius:8px">博主模式：在每条反馈下方直接写回复并保存，访客刷新后即可看到。首次使用需粘贴 GitHub 令牌（ghp_ 开头），令牌只保存在你自己的浏览器里。<div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><input id="ghTokenInput" type="password" placeholder="粘贴 GitHub 令牌" style="flex:1;min-width:200px;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12px"><button id="ghTokenSave" class="save-btn" style="padding:8px 14px;font-size:12px;margin:0">保存令牌</button></div></div>';
+    $('#ghTokenInput').value=localStorage.getItem('fb_ghToken')||'';
+    $('#ghTokenSave').addEventListener('click',function(){
+      const v=$('#ghTokenInput').value.trim();
+      if(!v){ toast('请先粘贴令牌'); return }
+      localStorage.setItem('fb_ghToken',v); toast('令牌已保存到本机浏览器');
+    });
+  }
+  renderMyFeedback();
 }
 
 /* ============ 正文字号（持久化 + 全文生效） ============ */
@@ -1875,8 +1924,9 @@ function renderProfile(){
   if(us) us.innerHTML=renderUserStats()+
     '<div style="background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:24px"><h3 style="font-family:var(--serif);color:var(--navy);margin-bottom:12px">近 7 天阅读</h3>'+chartHtml+'</div>'+
     '<div style="background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:24px"><h3 style="font-family:var(--serif);color:var(--navy);margin-bottom:12px">浏览历史</h3>'+hisHtml+'</div>'+
-    '<div style="background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:24px"><h3 style="font-family:var(--serif);color:var(--navy);margin-bottom:12px">我的反馈</h3><div id="myFeedbackList"></div></div>';
+    '<div style="background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:24px"><h3 style="font-family:var(--serif);color:var(--navy);margin-bottom:12px">我的反馈<span id="fbAdminToggle" style="float:right;font-size:12px;color:#3b5bdb;cursor:pointer;font-weight:400">博主回复</span></h3><div id="fbAdminBox" style="display:none;margin-bottom:12px"></div><div id="myFeedbackList"></div></div>';
   renderMyFeedback(); loadFbReplies();
+  const ftog=$('#fbAdminToggle'); if(ftog) ftog.addEventListener('click',toggleAdminFb);
 
   // 初始化已选值
   if(cur.gender) $('#pfGender').value=cur.gender;
