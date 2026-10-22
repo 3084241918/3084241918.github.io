@@ -1708,15 +1708,26 @@ function renderMyFeedback(){
       +'<div style="font-size:12px;color:var(--ink-faint);margin-top:4px">'+d.toLocaleString('zh-CN')+' · 编号 '+r.id+'</div>'
       +(rep?'<div style="margin-top:10px;background:rgba(76,175,80,.08);border-left:3px solid #4caf50;padding:8px 12px;border-radius:6px;font-size:13px"><b style="color:#2e7d32">博主回复：</b>'+esc(rep)+'</div>':'')
       +(window._fbAdmin?'<div style="margin-top:10px"><textarea id="rep_'+r.id+'" rows="2" style="width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:8px;padding:8px;font-size:13px;font-family:inherit" placeholder="写下你的回复，保存后访客刷新即可看到...">'+esc((window._fbReplies||{})[r.id]||'')+'</textarea><div style="margin-top:6px;text-align:right"><button class="save-btn" data-fbsave="'+r.id+'" style="padding:6px 14px;font-size:12px;margin:0">保存回复</button></div></div>':'')
+      +'<div style="margin-top:8px;text-align:right"><span data-fbdel="'+r.id+'" style="font-size:12px;color:#c0392b;cursor:pointer;opacity:.75">删除</span></div>'
       +'</div>';
   }).join('');
   $$('#myFeedbackList [data-fbsave]').forEach(function(b){
     b.addEventListener('click',function(){
       const id=b.getAttribute('data-fbsave');
       const t=document.getElementById('rep_'+id).value.trim();
-      if(!t){ toast('回复内容不能为空'); return }
+      if(!t&&!confirm('回复内容为空，将删除这条已保存的回复，确定吗？')) return;
       b.disabled=true; b.textContent='保存中...';
       pushReply(id,t).finally(function(){ b.disabled=false; b.textContent='保存回复'; });
+    });
+  });
+  $$('#myFeedbackList [data-fbdel]').forEach(function(el){
+    el.addEventListener('click',function(){
+      const id=el.getAttribute('data-fbdel');
+      if(!confirm('确定删除这条反馈记录吗？（仅删除本机记录，不影响其他访客）')) return;
+      let fb=[]; try{fb=JSON.parse(localStorage.getItem('fb_feedback')||'[]')}catch(e){}
+      fb=fb.filter(function(x){return x.id!==id});
+      localStorage.setItem('fb_feedback',JSON.stringify(fb));
+      renderMyFeedback(); toast('已删除这条反馈记录');
     });
   });
 }
@@ -1752,10 +1763,10 @@ async function pushReply(id,text){
     if(!res.ok){ toast('读取回复文件失败（'+res.status+'），请检查令牌是否有效'); return false }
     const j=await res.json();
     let cur=''; try{ cur=decodeURIComponent(escape(atob(j.content.replace(/\s/g,'')))) }catch(e){}
-    const map=fbParse(cur); map[id]=text;
+    const map=fbParse(cur); if(text){ map[id]=text } else { delete map[id] }
     const b64=btoa(unescape(encodeURIComponent(fbSerialize(map))));
     const put=await fetch(api,{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},h),body:JSON.stringify({message:'博主回复 '+id,content:b64,sha:j.sha})});
-    if(put.ok){ window._fbReplies=map; renderMyFeedback(); toast('回复已保存！访客刷新个人中心即可看到'); return true }
+    if(put.ok){ window._fbReplies=map; renderMyFeedback(); toast(text?'回复已保存！访客刷新个人中心即可看到':'回复已删除'); return true }
     toast('保存失败（'+put.status+'）'+(put.status===401?'，令牌无效或已过期':''));
     return false;
   }catch(err){ toast('网络错误，保存失败，请稍后再试'); return false }
