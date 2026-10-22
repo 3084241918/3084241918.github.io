@@ -75,10 +75,44 @@ def fetch_articles():
     return []
 
 
+def fetch_stats():
+    """抓取每篇文章的阅读/点赞/收藏/评论数，失败返回空 dict（不影响主流程）。"""
+    api = ("https://blog.csdn.net/community/home-api/v1/get-business-list"
+           "?page=1&size=50&businessType=blog&orderby=&noOverSelf=false"
+           "&username=2601_96964027")
+    urls = [api,
+            "https://api.allorigins.win/raw?url=" + urllib.parse.quote(api, safe=""),
+            "https://corsproxy.io/?url=" + urllib.parse.quote(api, safe="")]
+    hdrs = {"User-Agent": UA["User-Agent"], "Referer": BLOG_URL}
+    for url in urls:
+        try:
+            req = urllib.request.Request(url, headers=hdrs)
+            data = json.loads(urllib.request.urlopen(req, timeout=40).read().decode("utf-8"))
+            out = {}
+            for it in ((data.get("data") or {}).get("list")) or []:
+                u = it.get("url") or ""
+                if u:
+                    out[u] = {"views": it.get("viewCount") or 0,
+                              "diggs": it.get("diggCount") or 0,
+                              "collects": it.get("collectCount") or 0,
+                              "comments": it.get("commentCount") or 0}
+            if out:
+                print("stats ok:", url.split("?")[0])
+                return out
+        except Exception as e:
+            print("stats failed:", url.split("?")[0], type(e).__name__, str(e)[:80])
+    return {}
+
+
 def main():
     articles = fetch_articles()
     if not articles:
         sys.exit("no articles parsed; keep existing works.json")
+    stats = fetch_stats()
+    for a in articles:
+        s = stats.get(a["url"])
+        if s:
+            a.update(s)
     data = {
         "blog": {"name": "晴天遇见枫", "url": BLOG_URL},
         "updated": date.today().isoformat(),
