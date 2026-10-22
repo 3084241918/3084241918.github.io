@@ -1170,7 +1170,7 @@ function navigate(){
   else if(name==='archive') renderArchive();
   else if(name==='post') renderDetail(parseInt(param,10));
   else if(name==='qa') renderQA();
-  else if(name==='profile'){ renderProfile(); const us=$('#userStats'); if(us) us.innerHTML=renderUserStats(); }
+  else if(name==='profile'){ renderProfile(); }
   window.scrollTo({top:0, behavior:'instant'});
   closeDrawer();
 }
@@ -1787,6 +1787,7 @@ function renderProfile(){
   const box=$('#profileContent');
   if(!cur){
     box.innerHTML='<div class="empty-state" style="padding:60px 20px"><p>请先登录后查看个人中心</p><button class="nav-cta" style="margin-top:16px" onclick="openAuth(\'login\')">去登录</button></div>';
+    const us=$('#userStats'); if(us) us.innerHTML=renderUserStats();
     return;
   }
   const history=getHistory();
@@ -1815,8 +1816,7 @@ function renderProfile(){
   let hiddenPresets=[]; try{hiddenPresets=JSON.parse(localStorage.getItem(hidKey)||'[]')}catch(e){}
   const allTags=PRESET_TAGS.filter(t=>!hiddenPresets.includes(t)).concat(customTags.filter(t=>!PRESET_TAGS.includes(t)));
 
-  box.innerHTML='<div style="background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:22px"><h3 style="font-family:var(--serif);color:var(--navy);margin-bottom:18px">个人信息</h3><div class="profile-grid" style="grid-template-columns:110px 1fr;gap:20px;margin-top:0">'+
-    '<div><div class="avatar-upload" id="avatarUpload"><div class="hint">点击上传头像</div></div>'+
+  box.innerHTML='<div style="background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:22px"><h3 style="font-family:var(--serif);color:var(--navy);margin-bottom:18px">个人信息</h3><div class="profile-grid" style="grid-template-columns:110px 1fr;gap:20px;margin-top:0">'+    '<div><div class="avatar-upload" id="avatarUpload"><div class="hint">点击上传头像</div></div>'+
     '<p style="font-size:12px;color:var(--ink-faint);margin-top:10px;text-align:center">支持 JPG/PNG</p></div>'+
     '<div>'+
     '<div class="form-row"><label>昵称</label><input type="text" id="pfName" value="'+esc(cur.name)+'"></div>'+
@@ -1830,12 +1830,15 @@ function renderProfile(){
     }).join('')+
     '</div>'+
     '<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><input type="text" id="pfNewTag" placeholder="输入自定义标签，如：手账、羽毛球" maxlength="8" style="flex:1;min-width:160px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-size:13px"><button type="button" id="pfAddTag" style="padding:8px 16px;border:1px solid var(--line);background:var(--bg-sub);border-radius:8px;cursor:pointer;font-size:13px;color:var(--ink-soft);white-space:nowrap">＋ 添加标签</button><button type="button" id="pfResetTags" style="padding:8px 16px;border:1px solid var(--line);background:none;border-radius:8px;cursor:pointer;font-size:13px;color:var(--ink-faint);white-space:nowrap">恢复默认</button></div>'+
-    '</div></div>'+
-    '<div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap"><button class="save-btn" id="pfSave" style="margin:0">保存资料</button><button id="pfLogout" style="background:none;border:1px solid var(--line);color:var(--ink-faint);padding:10px 18px;border-radius:8px;cursor:pointer;font-size:13px;transition:all .15s">退出登录</button></div>'+
     '</div></div></div>'+
-    '<div id="pfExtraWrap"></div>';
+    '<div style="margin-top:24px;display:flex;gap:12px;justify-content:flex-end;flex-wrap:wrap"><button class="save-btn" id="pfSave" style="margin:0">保存资料</button><button id="pfLogout" style="background:none;border:1px solid var(--line);color:var(--ink-faint);padding:10px 18px;border-radius:8px;cursor:pointer;font-size:13px;transition:all .15s;white-space:nowrap">退出登录</button></div>'+
+    '</div>';
 
-  const extra=$('#pfExtraWrap'); if(extra) extra.innerHTML='<div style="display:flex;gap:24px;margin-top:24px;flex-wrap:wrap;align-items:flex-start"><div style="flex:1;min-width:300px;background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:22px"><h3 style="font-family:var(--serif);color:var(--navy);margin-bottom:12px">近 7 天阅读</h3>'+chartHtml+'</div><div style="flex:1.4;min-width:300px;background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:22px"><h3 style="font-family:var(--serif);color:var(--navy);margin-bottom:12px">浏览历史</h3>'+hisHtml+'</div></div>';
+  // 右栏：统计卡片 + 图表 + 近 7 天阅读 + 浏览历史（贴在可视化展板下方）
+  const us=$('#userStats');
+  if(us) us.innerHTML=renderUserStats()+
+    '<div style="background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:24px"><h3 style="font-family:var(--serif);color:var(--navy);margin-bottom:12px">近 7 天阅读</h3>'+chartHtml+'</div>'+
+    '<div style="background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:24px"><h3 style="font-family:var(--serif);color:var(--navy);margin-bottom:12px">浏览历史</h3>'+hisHtml+'</div>';
 
   // 初始化已选值
   if(cur.gender) $('#pfGender').value=cur.gender;
