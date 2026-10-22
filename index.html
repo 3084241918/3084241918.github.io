@@ -199,7 +199,7 @@ body[data-size="large"]{font-size:17.5px}
 .form-submit:disabled{opacity:.5;cursor:not-allowed}
 .modal-switch{text-align:center;font-size:13.5px;color:var(--ink-soft);margin-top:16px}
 .modal-switch a{color:var(--amber);cursor:pointer}
-.modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:8px;display:grid;place-items:center;color:var(--ink-faint);cursor:pointer;font-size:16px}
+.modal-close{position:sticky;top:0;float:right;width:32px;height:32px;border-radius:8px;display:grid;place-items:center;color:var(--ink-faint);cursor:pointer;font-size:16px;margin:-16px -16px 0 8px;z-index:5;flex-shrink:0}
 .modal-close:hover{background:var(--bg-sub)}
 
 /* 设置抽屉 */
@@ -377,6 +377,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 .chart-table th,.chart-table td{text-align:left;padding:7px 10px;border-bottom:1px dashed var(--line)}
 .chart-table th{color:var(--navy);font-size:12px}
 .chart-table tr:last-child td{border-bottom:none}
+.tag-checkbox{display:inline-flex;align-items:center}
+.tag-checkbox .tag-rm{font-style:normal;margin-left:3px;color:var(--ink-faint);cursor:pointer;font-size:11px;padding:0 3px;line-height:1}
+.tag-checkbox .tag-rm:hover{color:#e74c3c}
 /* 评论区 */
 .comment-box{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
 .comment-item{padding:10px 0;border-bottom:1px dashed var(--line);font-size:13px}
@@ -1656,6 +1659,7 @@ function renderFbPreview(){
   }).join('');
   $$('#fbPreview [data-rm]').forEach(el=>el.addEventListener('click',()=>{ fbFiles.splice(parseInt(el.dataset.rm,10),1); renderFbPreview(); }));
 }
+const FEEDBACK_EMAIL=''; // ← 填上你的邮箱（如 xxx@qq.com），访客的反馈就会自动发送到这个邮箱；留空则仅保存在访问者浏览器
 $('#feedbackForm').addEventListener('submit',function(e){
   e.preventDefault();
   const c=$('#fbContent').value.trim();
@@ -1663,6 +1667,22 @@ $('#feedbackForm').addEventListener('submit',function(e){
   let fb=[]; try{fb=JSON.parse(localStorage.getItem('fb_feedback')||'[]')}catch(e){}
   fb.push({type:$('#fbType').value,content:c,contact:$('#fbContact').value,files:fbFiles.length,ts:Date.now()});
   localStorage.setItem('fb_feedback',JSON.stringify(fb));
+  if(FEEDBACK_EMAIL){
+    try{
+      fetch('https://formsubmit.co/ajax/'+FEEDBACK_EMAIL,{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Accept':'application/json'},
+        body:JSON.stringify({
+          _subject:'博客收到新反馈：'+$('#fbType').value,
+          反馈类型:$('#fbType').value,
+          详细内容:c,
+          联系方式:$('#fbContact').value||'未填写',
+          附件数量:fbFiles.length,
+          提交时间:new Date().toLocaleString('zh-CN')
+        })
+      }).catch(function(){});
+    }catch(err){}
+  }
   toast('感谢反馈！我们会认真看的');
   $('#feedbackModal').classList.remove('show');
   this.reset(); fbFiles=[]; $('#fbPreview').innerHTML='';
@@ -1784,6 +1804,12 @@ function renderProfile(){
     '<div class="stat-bar"><div class="bar" style="height:'+(d.cnt/maxCnt*70)+'px"></div><span class="day">'+d.label+'</span></div>'
   ).join('')+'</div>';
 
+  // 兴趣标签：预设 + 自定义
+  const tgKey='fb_cTags_'+(cur.email||'anon');
+  const PRESET_TAGS=['前端','后端','CSS','React','TypeScript','算法','数据库','产品设计','职业发展','读书','摄影','旅行','音乐','运动','美食','写作','电影'];
+  let customTags=[]; try{customTags=JSON.parse(localStorage.getItem(tgKey)||'[]')}catch(e){}
+  const allTags=PRESET_TAGS.concat(customTags.filter(t=>!PRESET_TAGS.includes(t)));
+
   box.innerHTML='<div class="profile-grid">'+
     '<div><div class="avatar-upload" id="avatarUpload"><div class="hint">点击上传头像</div></div>'+
     '<p style="font-size:12px;color:var(--ink-faint);margin-top:10px;text-align:center">支持 JPG/PNG</p></div>'+
@@ -1792,8 +1818,13 @@ function renderProfile(){
     '<div class="form-row"><label>性别</label><select id="pfGender"><option value="保密">保密</option><option value="男">男</option><option value="女">女</option></select></div>'+
     '<div class="form-row"><label>年龄</label><input type="number" id="pfAge" min="1" max="120" value="'+(cur.age||'')+'"></div>'+
     '<div class="form-row"><label>所在地区</label><select id="pfRegion"><option value="">请选择</option><option>北京</option><option>上海</option><option>广州</option><option>深圳</option><option>杭州</option><option>成都</option><option>重庆</option><option>武汉</option><option>西安</option><option>其他</option></select></div>'+
-    '<div class="form-row"><label>兴趣标签（多选）</label><div id="pfTags">'+
-    ['前端','后端','CSS','React','TypeScript','算法','数据库','产品设计','职业发展','读书','摄影','旅行','音乐','运动','美食','写作','电影'].map(t=>'<span class="tag-checkbox" data-tag="'+t+'">'+t+'</span>').join('')+
+    '<div class="form-row"><label>兴趣标签（多选，支持自定义）</label><div id="pfTags">'+
+    allTags.map(t=>{
+      const isCustom=!PRESET_TAGS.includes(t);
+      return '<span class="tag-checkbox" data-tag="'+esc(t)+'" title="'+(isCustom?'自定义标签，点 × 可删除':'')+'">'+esc(t)+(isCustom?'<i class="tag-rm" data-rm="'+esc(t)+'" title="删除此标签">×</i>':'')+'</span>';
+    }).join('')+
+    '</div>'+
+    '<div style="display:flex;gap:8px;margin-top:10px"><input type="text" id="pfNewTag" placeholder="输入自定义标签，如：手账、羽毛球" maxlength="8" style="flex:1;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-size:13px"><button type="button" id="pfAddTag" style="padding:8px 16px;border:1px solid var(--line);background:var(--bg-sub);border-radius:8px;cursor:pointer;font-size:13px;color:var(--ink-soft);white-space:nowrap">＋ 添加标签</button></div>'+
     '</div></div>'+
     '<div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap"><button class="save-btn" id="pfSave" style="margin:0">保存资料</button><button id="pfLogout" style="background:none;border:1px solid var(--line);color:var(--ink-faint);padding:10px 18px;border-radius:8px;cursor:pointer;font-size:13px;transition:all .15s">退出登录</button></div>'+
     '</div></div>'+
@@ -1807,6 +1838,21 @@ function renderProfile(){
 
   // 兴趣标签多选
   $$('#pfTags .tag-checkbox').forEach(c=>c.addEventListener('click',()=>c.classList.toggle('checked')));
+  // 添加自定义标签
+  $('#pfAddTag').addEventListener('click',function(){
+    const v=$('#pfNewTag').value.trim();
+    if(!v){toast('先输入标签名');return}
+    if(allTags.includes(v)){toast('已经有这个标签啦');return}
+    customTags.push(v); localStorage.setItem(tgKey,JSON.stringify(customTags));
+    renderProfile(); toast('标签"'+v+'"已添加，勾选后点保存资料生效');
+  });
+  // 删除自定义标签
+  $$('#pfTags .tag-rm').forEach(el=>el.addEventListener('click',function(e){
+    e.stopPropagation();
+    customTags=customTags.filter(t=>t!==this.dataset.rm);
+    localStorage.setItem(tgKey,JSON.stringify(customTags));
+    renderProfile();
+  }));
 
   // 头像上传
   $('#avatarUpload').addEventListener('click',function(){
