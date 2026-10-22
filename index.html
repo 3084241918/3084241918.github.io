@@ -1662,7 +1662,7 @@ function renderFbPreview(){
   }).join('');
   $$('#fbPreview [data-rm]').forEach(el=>el.addEventListener('click',()=>{ fbFiles.splice(parseInt(el.dataset.rm,10),1); renderFbPreview(); }));
 }
-const FEEDBACK_EMAIL=''; // ← 填上你的邮箱（如 xxx@qq.com），访客的反馈就会自动发送到这个邮箱；留空则仅保存在访问者浏览器
+const FEEDBACK_EMAIL='3084241918@qq.com'; // 访客反馈自动发送到这个邮箱（首次需在邮箱里点 Activate 激活）
 $('#feedbackForm').addEventListener('submit',function(e){
   e.preventDefault();
   const c=$('#fbContent').value.trim();
