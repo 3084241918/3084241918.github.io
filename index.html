@@ -1,0 +1,1802 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>前端札记 · Frontend Notes</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2316324F'/%3E%3Cpath d='M10 12l-5 4 5 4M22 12l5 4-5 4M19 9l-6 14' stroke='%23E07A1F' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+:root{
+  --bg:#F8F7F4;--bg-elev:#FFFFFF;--bg-sub:#F1EFE8;
+  --ink:#1C1C1C;--ink-soft:#5A5A5A;--ink-faint:#9A9A9A;
+  --line:#E6E3DC;--navy:#16324F;--navy-deep:#0E2238;
+  --amber:#E07A1F;--amber-soft:#FBE7D2;--code-bg:#F1EFE8;
+  --shadow:0 1px 2px rgba(22,50,79,.04),0 4px 16px rgba(22,50,79,.06);
+  --shadow-hover:0 4px 8px rgba(22,50,79,.06),0 12px 32px rgba(22,50,79,.12);
+  --serif:'Noto Serif SC',Georgia,'Songti SC',serif;
+  --sans:'Noto Sans SC',-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --max:1180px;
+}
+[data-theme="dark"]{
+  --bg:#12161C;--bg-elev:#1A2028;--bg-sub:#222A35;
+  --ink:#E8E6E1;--ink-soft:#A8ADB6;--ink-faint:#6B7280;
+  --line:#2A323E;--navy:#7BA7D9;--navy-deep:#9CC0E8;
+  --amber:#F0954A;--amber-soft:rgba(224,122,31,.15);--code-bg:#222A35;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
+  --shadow-hover:0 4px 8px rgba(0,0,0,.35),0 12px 32px rgba(0,0,0,.4);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input{font-family:inherit}
+::selection{background:var(--amber);color:#fff}
+.scroll-progress{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--amber),var(--navy));width:0%;z-index:200}
+
+.nav{position:sticky;top:0;z-index:100;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:saturate(180%) blur(14px);border-bottom:1px solid var(--line)}
+.nav-inner{max-width:var(--max);margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;gap:24px}
+.logo{display:flex;align-items:center;gap:10px;flex-shrink:0;font-family:var(--serif);font-weight:900;font-size:19px;color:var(--navy)}
+.logo-mark{width:32px;height:32px;border-radius:7px;background:var(--navy);color:var(--bg);display:grid;place-items:center;font-family:var(--mono);font-size:13px;font-weight:700;transition:transform .2s}
+.logo:hover .logo-mark{transform:rotate(-6deg) scale(1.05)}
+.nav-links{display:flex;gap:2px;list-style:none}
+.nav-links a{padding:8px 14px;border-radius:7px;font-size:14.5px;color:var(--ink-soft);transition:all .15s;display:block}
+.nav-links a:hover{background:var(--bg-sub);color:var(--ink)}
+.nav-links a.active{color:var(--navy);font-weight:500;background:var(--amber-soft)}
+.nav-search{flex:1;max-width:320px;margin-left:auto;position:relative}
+.nav-search input{width:100%;height:38px;padding:0 14px 0 38px;border:1px solid var(--line);border-radius:8px;background:var(--bg-elev);font-size:14px;color:var(--ink);outline:none;transition:all .15s}
+.nav-search input:focus{border-color:var(--navy);box-shadow:0 0 0 3px color-mix(in srgb,var(--navy) 15%,transparent)}
+.nav-search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--ink-faint);pointer-events:none}
+.icon-btn{width:38px;height:38px;border-radius:8px;display:grid;place-items:center;color:var(--ink-soft);transition:all .15s;flex-shrink:0}
+.icon-btn:hover{background:var(--bg-sub);color:var(--ink)}
+.nav-cta{height:38px;padding:0 18px;border-radius:8px;background:var(--navy);color:var(--bg);font-size:14px;font-weight:500;transition:all .15s;white-space:nowrap}
+.nav-cta:hover{opacity:.9;transform:translateY(-1px);box-shadow:var(--shadow)}
+.nav-burger{display:none}
+
+.hero{max-width:var(--max);margin:0 auto;padding:72px 24px 48px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;right:-100px;top:-100px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,var(--amber-soft) 0%,transparent 70%);pointer-events:none}
+.hero-eyebrow{font-family:var(--mono);font-size:12.5px;letter-spacing:2px;color:var(--amber);margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.hero-eyebrow::before{content:"";width:28px;height:1px;background:var(--amber)}
+.hero h1{font-family:var(--serif);font-weight:900;font-size:clamp(32px,5vw,54px);line-height:1.25;color:var(--navy);max-width:820px;letter-spacing:.5px}
+.type-cursor{display:inline-block;width:3px;height:.9em;background:var(--amber);vertical-align:middle;margin-left:4px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.hero-sub{margin-top:20px;font-size:17px;color:var(--ink-soft);max-width:620px}
+.hero-meta{margin-top:28px;display:flex;gap:28px;flex-wrap:wrap;font-size:13.5px;color:var(--ink-faint)}
+.hero-meta b{color:var(--ink);font-weight:500;font-family:var(--mono)}
+
+.layout{max-width:var(--max);margin:0 auto;padding:0 24px 80px;display:grid;grid-template-columns:1fr 300px;gap:48px}
+.view{display:none;animation:fadeUp .3s ease}
+.view.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.feature{padding:32px 0 36px;border-bottom:1px solid var(--line);cursor:pointer}
+.feature-tag{font-family:var(--mono);font-size:12px;letter-spacing:2px;color:var(--amber);margin-bottom:14px}
+.feature h2{font-family:var(--serif);font-weight:900;font-size:clamp(22px,3vw,30px);line-height:1.4;color:var(--navy);margin-bottom:14px;transition:color .15s}
+.feature:hover h2{color:var(--amber)}
+.feature-excerpt{color:var(--ink-soft);font-size:15.5px;max-width:720px}
+.article-meta{margin-top:16px;font-size:13px;color:var(--ink-faint);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.article-meta .author{color:var(--ink);font-weight:500}
+.feed-divider{display:flex;align-items:center;gap:16px;margin:28px 0 8px;color:var(--ink-faint);font-size:13px;font-family:var(--mono);letter-spacing:2px}
+.feed-divider::before,.feed-divider::after{content:"";flex:1;height:1px;background:var(--line)}
+
+.post{display:grid;grid-template-columns:1fr auto;gap:24px;padding:26px 20px;margin:0 -20px;border-bottom:1px solid var(--line);border-radius:10px;cursor:pointer;transition:all .2s;opacity:0;transform:translateY(12px)}
+.post.visible{opacity:1;transform:none;transition:opacity .4s,transform .4s,background .15s}
+.post:hover{background:var(--bg-elev);box-shadow:var(--shadow)}
+.post h3{font-family:var(--serif);font-weight:700;font-size:19px;line-height:1.5;color:var(--ink);margin-bottom:8px;transition:color .15s}
+.post:hover h3{color:var(--amber)}
+.post-excerpt{font-size:14.5px;color:var(--ink-soft);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.post-side{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.read-badge{font-family:var(--mono);font-size:11px;background:var(--amber-soft);color:var(--amber);padding:3px 10px;border-radius:999px;white-space:nowrap}
+.cat-badge{font-family:var(--mono);font-size:11px;color:var(--ink-faint);padding:3px 10px;border:1px solid var(--line);border-radius:999px}
+.load-more{margin:32px auto 0;display:block;padding:12px 32px;border:1px solid var(--line);border-radius:8px;background:var(--bg-elev);font-size:14px;color:var(--ink-soft);transition:all .15s}
+.load-more:hover{border-color:var(--navy);color:var(--navy);box-shadow:var(--shadow)}
+.empty-state{padding:60px 20px;text-align:center;color:var(--ink-faint)}
+.empty-state .icon{font-size:40px;margin-bottom:12px;opacity:.4}
+
+.sidebar{display:flex;flex-direction:column;gap:24px;position:sticky;top:88px;align-self:start}
+.widget{background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:22px;box-shadow:var(--shadow)}
+.widget h3{font-family:var(--serif);font-size:16px;font-weight:700;color:var(--navy);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.tag-list{display:flex;flex-wrap:wrap;gap:8px}
+.tag-list a{padding:5px 12px;border-radius:999px;font-size:13px;background:var(--bg-sub);color:var(--ink-soft);transition:all .15s;cursor:pointer}
+.tag-list a:hover{background:var(--amber-soft);color:var(--amber)}
+.hot-list{list-style:none;counter-reset:hot}
+.hot-list li{counter-increment:hot;padding:10px 0;border-bottom:1px dashed var(--line);cursor:pointer}
+.hot-list li:last-child{border-bottom:none}
+.hot-list li::before{content:counter(hot,decimal-leading-zero);font-family:var(--mono);font-size:12px;color:var(--amber);margin-right:10px}
+.hot-list a{font-size:14px;color:var(--ink);line-height:1.5;display:block}
+.hot-list a:hover{color:var(--amber)}
+.about-card{background:var(--navy);color:color-mix(in srgb,var(--bg) 85%,transparent);border-radius:12px;padding:24px}
+.about-card h3{color:var(--bg);border-color:color-mix(in srgb,var(--bg) 20%,transparent)}
+.about-card p{font-size:13.5px;line-height:1.75;opacity:.9}
+.about-card .social{display:flex;gap:10px;margin-top:16px}
+.about-card .social a{width:34px;height:34px;border-radius:8px;background:color-mix(in srgb,var(--bg) 12%,transparent);display:grid;place-items:center;font-size:12px;font-family:var(--mono);transition:all .15s;cursor:pointer}
+.about-card .social a:hover{background:color-mix(in srgb,var(--bg) 25%,transparent)}
+
+.post-detail{max-width:760px;margin:0 auto;padding:48px 24px 80px}
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--ink-soft);margin-bottom:32px;padding:6px 14px;border-radius:8px;transition:all .15s;cursor:pointer}
+.back-btn:hover{background:var(--bg-sub);color:var(--ink)}
+.detail-header{margin-bottom:36px}
+.detail-header .cat{display:inline-block;font-family:var(--mono);font-size:12px;color:var(--amber);background:var(--amber-soft);padding:4px 12px;border-radius:999px;margin-bottom:16px}
+.detail-header h1{font-family:var(--serif);font-weight:900;font-size:clamp(26px,4vw,40px);line-height:1.3;color:var(--navy);margin-bottom:18px}
+.detail-header .meta{font-size:14px;color:var(--ink-faint);display:flex;gap:12px;flex-wrap:wrap}
+.detail-body{font-size:16.5px;line-height:1.9;color:var(--ink)}
+.detail-body h2{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--navy);margin:40px 0 16px}
+.detail-body p{margin-bottom:18px}
+.detail-body pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:18px 20px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;line-height:1.7;margin:20px 0}
+.detail-body code{font-family:var(--mono);font-size:.9em;background:var(--code-bg);padding:2px 6px;border-radius:4px}
+.detail-body pre code{background:none;padding:0}
+.detail-body blockquote{border-left:3px solid var(--amber);padding:8px 0 8px 20px;margin:20px 0;color:var(--ink-soft);font-style:italic}
+.detail-tags{margin-top:48px;padding-top:24px;border-top:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap}
+
+.archive-group{margin-bottom:36px}
+.archive-year{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--navy);margin-bottom:16px;display:flex;align-items:baseline;gap:12px}
+.archive-year .count{font-size:13px;color:var(--ink-faint);font-family:var(--mono);font-weight:400}
+.archive-item{display:flex;align-items:baseline;gap:16px;padding:10px 0;border-bottom:1px dashed var(--line);cursor:pointer;transition:padding-left .15s}
+.archive-item:hover{padding-left:8px}
+.archive-item .date{font-family:var(--mono);font-size:13px;color:var(--ink-faint);flex-shrink:0;width:90px}
+.archive-item .title{font-size:15.5px;color:var(--ink)}
+.archive-item:hover .title{color:var(--amber)}
+
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:24px}
+.cat-card{background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:24px;cursor:pointer;transition:all .2s}
+.cat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover);border-color:var(--amber)}
+.cat-card .name{font-family:var(--serif);font-size:18px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.cat-card .num{font-family:var(--mono);font-size:13px;color:var(--ink-faint)}
+
+.about-page{max-width:680px;margin:0 auto;padding:48px 24px 80px}
+.about-page h1{font-family:var(--serif);font-size:36px;font-weight:900;color:var(--navy);margin-bottom:24px}
+.about-page p{font-size:16px;line-height:1.9;color:var(--ink-soft);margin-bottom:16px}
+
+.footer{border-top:1px solid var(--line);background:#0E2238;color:#9AB0C4;margin-top:40px}
+[data-theme="dark"] .footer{color:#6B7280}
+.footer-inner{max-width:var(--max);margin:0 auto;padding:40px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-size:13.5px}
+.footer .mono{font-family:var(--mono);font-size:12px}
+.back-top{position:fixed;right:24px;bottom:24px;width:44px;height:44px;border-radius:50%;background:var(--navy);color:var(--bg);display:grid;place-items:center;box-shadow:var(--shadow-hover);opacity:0;pointer-events:none;transition:all .25s;z-index:90}
+.back-top.show{opacity:1;pointer-events:auto}
+.back-top:hover{transform:translateY(-2px)}
+.toast{position:fixed;left:50%;bottom:40px;transform:translateX(-50%);background:var(--navy);color:var(--bg);padding:10px 18px;border-radius:8px;font-size:13.5px;z-index:9999;box-shadow:var(--shadow-hover);opacity:0;transition:opacity .2s}
+.toast.show{opacity:1}
+.drawer-mask{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:150;opacity:0;pointer-events:none;transition:opacity .2s}
+.drawer-mask.show{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:-280px;width:280px;height:100vh;background:var(--bg-elev);z-index:160;padding:24px;transition:right .25s;box-shadow:-4px 0 24px rgba(0,0,0,.1)}
+.drawer.show{right:0}
+.drawer a{display:block;padding:12px 8px;border-radius:8px;font-size:15px;color:var(--ink)}
+.drawer a:hover,.drawer a.active{background:var(--bg-sub);color:var(--navy)}
+
+@media (max-width:900px){
+  .layout{grid-template-columns:1fr;gap:32px}
+  .nav-links,.nav-cta{display:none}
+  .nav-burger{display:grid}
+  .sidebar{position:static}
+  .hero{padding:48px 20px 36px}
+}
+@media (max-width:560px){.nav-search{display:none}}
+
+/* === 主题色 === */
+[data-font="sans"]{--serif:'Noto Sans SC',sans-serif}
+[data-font="mono"]{--serif:'JetBrains Mono',monospace}
+body[data-size="small"]{font-size:14px}
+body[data-size="large"]{font-size:17.5px}
+
+/* 弹窗 */
+.modal-mask{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:none;align-items:center;justify-content:center;opacity:0;transition:opacity .2s}
+.modal-mask.show{display:flex;opacity:1}
+.modal{position:relative;background:var(--bg-elev);border-radius:16px;padding:32px;width:90%;max-width:560px;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow-hover);transform:translateY(10px) scale(.97);transition:transform .2s}
+.modal-mask.show .modal{transform:none}
+.modal h2{font-family:var(--serif);font-size:22px;color:var(--navy);margin-bottom:6px}
+.modal .sub{font-size:13.5px;color:var(--ink-faint);margin-bottom:24px}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:13px;color:var(--ink-soft);margin-bottom:6px}
+.form-group input{width:100%;height:42px;padding:0 14px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-size:14px;outline:none;transition:border-color .15s}
+.form-group input:focus{border-color:var(--navy)}
+.form-group input.error{border-color:#e74c3c}
+.form-error{font-size:12px;color:#e74c3c;margin-top:4px;min-height:16px}
+.form-submit{width:100%;height:44px;border-radius:8px;background:var(--navy);color:var(--bg);font-size:15px;font-weight:500;margin-top:8px;transition:opacity .15s}
+.form-submit:disabled{opacity:.5;cursor:not-allowed}
+.modal-switch{text-align:center;font-size:13.5px;color:var(--ink-soft);margin-top:16px}
+.modal-switch a{color:var(--amber);cursor:pointer}
+.modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:8px;display:grid;place-items:center;color:var(--ink-faint);cursor:pointer;font-size:16px}
+.modal-close:hover{background:var(--bg-sub)}
+
+/* 设置抽屉 */
+.settings-panel{position:fixed;top:0;right:-340px;width:320px;height:100vh;background:var(--bg-elev);z-index:310;padding:28px;transition:right .25s;box-shadow:-4px 0 24px rgba(0,0,0,.15);overflow-y:auto}
+.settings-panel.show{right:0}
+.settings-panel h2{font-family:var(--serif);font-size:20px;color:var(--navy);margin-bottom:20px}
+.setting-group{margin-bottom:24px}
+.setting-group .label{font-size:12px;color:var(--ink-faint);margin-bottom:10px;font-family:var(--mono);letter-spacing:1.5px;text-transform:uppercase}
+.color-dots{display:flex;gap:10px;flex-wrap:wrap}
+.color-dot{width:32px;height:32px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .15s}
+.color-dot:hover{transform:scale(1.1)}
+.color-dot.active{border-color:var(--ink);transform:scale(1.1)}
+.option-row{display:flex;gap:8px;flex-wrap:wrap}
+.option-chip{padding:7px 14px;border-radius:8px;border:1px solid var(--line);font-size:13px;cursor:pointer;color:var(--ink-soft);transition:all .15s}
+.option-chip.active{background:var(--navy);color:var(--bg);border-color:var(--navy)}
+
+/* 轮播 */
+.carousel{position:relative;border-radius:14px;overflow:hidden;margin-bottom:8px;background:var(--bg-elev);border:1px solid var(--line);box-shadow:var(--shadow)}
+.carousel-track{display:flex;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+.carousel-slide{min-width:100%;padding:32px 36px;cursor:pointer}
+.carousel-slide .ctag{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--amber);margin-bottom:10px}
+.carousel-slide h3{font-family:var(--serif);font-size:20px;font-weight:700;color:var(--navy);margin-bottom:8px;line-height:1.4}
+.carousel-slide p{font-size:13.5px;color:var(--ink-soft);max-width:90%}
+.carousel-dots{position:absolute;bottom:14px;right:20px;display:flex;gap:6px}
+.carousel-dots span{width:8px;height:8px;border-radius:50%;background:var(--line);cursor:pointer;transition:all .2s}
+.carousel-dots span.active{background:var(--amber);width:20px;border-radius:4px}
+
+/* 骨架屏 */
+.skeleton{background:linear-gradient(90deg,var(--bg-sub) 25%,var(--bg-elev) 50%,var(--bg-sub) 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:6px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* 用户区 */
+.user-chip{display:flex;align-items:center;gap:8px;cursor:pointer;padding:5px 10px;border-radius:8px;transition:background .15s}
+.user-chip:hover{background:var(--bg-sub)}
+.avatar{width:30px;height:30px;border-radius:50%;background:var(--amber);color:#fff;display:grid;place-items:center;font-size:13px;font-weight:700;flex-shrink:0}
+.login-btn{height:38px;padding:0 18px;border-radius:8px;border:1.5px solid var(--navy);color:var(--navy);font-size:14px;transition:all .15s;background:transparent}
+.login-btn:hover{background:var(--navy);color:var(--bg)}
+
+/* 主题色扩展到 12 组 */
+
+/* 字号滑块 */
+input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;background:var(--bg-sub);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--navy);cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.range-val{font-family:var(--mono);font-size:12px;color:var(--ink-faint);margin-left:8px}
+
+/* 密码强度 */
+.pwd-strength{display:flex;gap:4px;margin-top:6px}
+.pwd-strength span{flex:1;height:4px;border-radius:2px;background:var(--line);transition:background .2s}
+.pwd-strength.weak span:nth-child(1){background:#e74c3c}
+.pwd-strength.mid span:nth-child(-n+2){background:#f39c12}
+.pwd-strength.strong span{background:#27ae60}
+.pwd-hint{font-size:11.5px;color:var(--ink-faint);margin-top:4px}
+
+/* 第三方登录 */
+.oauth-row{display:flex;gap:10px;justify-content:center;margin:18px 0 8px}
+.oauth-btn{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700;color:#fff;cursor:pointer;transition:transform .15s;border:none}
+.oauth-btn:hover{transform:translateY(-2px)}
+.oauth-wechat{background:#07C160}
+.oauth-qq{background:#12B7F5}
+.oauth-phone{background:#E07A1F}
+.divider-or{display:flex;align-items:center;gap:12px;color:var(--ink-faint);font-size:12px;margin:16px 0}
+.divider-or::before,.divider-or::after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* 用户中心 */
+.profile-grid{display:grid;grid-template-columns:200px 1fr;gap:36px;margin-top:24px}
+@media(max-width:700px){.profile-grid{grid-template-columns:1fr}}
+.avatar-upload{width:120px;height:120px;border-radius:50%;background:var(--bg-sub);display:grid;place-items:center;cursor:pointer;overflow:hidden;position:relative;border:2px dashed var(--line)}
+.avatar-upload:hover{border-color:var(--navy)}
+.avatar-upload img{width:100%;height:100%;object-fit:cover}
+.avatar-upload .hint{font-size:12px;color:var(--ink-faint);text-align:center;padding:8px}
+.form-row{margin-bottom:18px}
+.form-row label{display:block;font-size:13px;color:var(--ink-soft);margin-bottom:6px}
+.form-row input[type=text],.form-row input[type=number],.form-row select,.form-row textarea{
+  width:100%;height:40px;padding:0 12px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-size:14px;outline:none;font-family:inherit
+}
+.form-row textarea{height:auto;padding:10px 12px;resize:vertical}
+.form-row input:focus,.form-row select:focus,.form-row textarea:focus{border-color:var(--navy)}
+.tag-checkbox{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;font-size:13px;cursor:pointer;margin:0 6px 8px 0;transition:all .15s}
+.tag-checkbox input{display:none}
+.tag-checkbox.checked{background:var(--amber-soft);border-color:var(--amber);color:var(--amber)}
+.save-btn{height:42px;padding:0 28px;border-radius:8px;background:var(--navy);color:var(--bg);font-size:14px;font-weight:500}
+
+/* 浏览历史 & 统计 */
+.history-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px dashed var(--line);cursor:pointer}
+.history-item:hover .h-title{color:var(--amber)}
+.h-title{font-size:14.5px;color:var(--ink)}
+.h-time{font-size:12px;color:var(--ink-faint);font-family:var(--mono)}
+.stat-chart{display:flex;align-items:flex-end;gap:8px;height:100px;margin-top:16px;padding:0 8px}
+.stat-bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}
+.stat-bar .bar{width:100%;background:var(--navy);border-radius:4px 4px 0 0;min-height:4px;transition:height .3s;opacity:.85}
+.stat-bar:hover .bar{opacity:1}
+.stat-bar .day{font-size:11px;color:var(--ink-faint);font-family:var(--mono)}
+
+/* 安全区块 */
+.security-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);font-size:14px}
+.security-item:last-child{border:none}
+.switch{position:relative;width:40px;height:22px;background:var(--line);border-radius:11px;cursor:pointer;transition:background .2s}
+.switch.on{background:var(--amber)}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .2s}
+.switch.on::after{left:20px}
+
+/* 亮色/柔和主题 */
+
+/* === 27 组主题色（12 深/中 + 15 淡柔） === */
+[data-accent="ocean"]{--navy:#16324F;--amber:#E07A1F}
+[data-accent="forest"]{--navy:#1F4D3A;--amber:#E0A01F}
+[data-accent="violet"]{--navy:#3D2B5C;--amber:#E05A8A}
+[data-accent="crimson"]{--navy:#5C1F2B;--amber:#E08A1F}
+[data-accent="teal"]{--navy:#0F4C5C;--amber:#E07A1F}
+[data-accent="slate"]{--navy:#2D3748;--amber:#D97706}
+[data-accent="sakura"]{--navy:#C2185B;--amber:#FF8A65}
+[data-accent="mint"]{--navy:#00695C;--amber:#FFB74D}
+[data-accent="sky"]{--navy:#1565C0;--amber:#FFA726}
+[data-accent="lavender"]{--navy:#5E35B1;--amber:#FF7043}
+[data-accent="peach"]{--navy:#D84315;--amber:#FBC02D}
+[data-accent="citrus"]{--navy:#2E7D32;--amber:#F9A825}
+/* 15 个淡柔主题 */
+[data-accent="rose"]{--navy:#B0607A;--amber:#E8A0B0}
+[data-accent="indigo"]{--navy:#5C6FA8;--amber:#A0B8E8}
+[data-accent="plum"]{--navy:#8A5C8A;--amber:#D0A8D0}
+[data-accent="olive"]{--navy:#7A8B4F;--amber:#C0CC8A}
+[data-accent="coral"]{--navy:#C07A5E;--amber:#F0B8A0}
+[data-accent="butter"]{--navy:#A89040;--amber:#E8D88A}
+[data-accent="sage"]{--navy:#6B8B7A;--amber:#B0D0C0}
+[data-accent="wine"]{--navy:#8B4A5A;--amber:#D8A0B0}
+[data-accent="azure"]{--navy:#4A7BA8;--amber:#A0C8E8}
+[data-accent="sand"]{--navy:#9A7B5A;--amber:#D8C0A0}
+[data-accent="moss"]{--navy:#5A7A5A;--amber:#A8C8A8}
+[data-accent="lilac"]{--navy:#8A6BA8;--amber:#C8B0E0}
+[data-accent="apricot"]{--navy:#C08060;--amber:#F0C8A0}
+[data-accent="slateblue"]{--navy:#5A6B8A;--amber:#A8B8D8}
+[data-accent="seafoam"]{--navy:#4A8B7B;--amber:#A0D8C8}
+
+/* 打字机当前字高亮 */
+.type-cur{display:inline-block;color:var(--amber);transform:scale(1.2);transition:transform .12s;text-shadow:0 0 20px var(--amber)}
+/* 轮播配图 */
+.carousel-slide{display:flex;gap:20px;align-items:center}
+.carousel-slide .cinfo{flex:1;min-width:0}
+.carousel-slide .cimg{width:140px;height:90px;border-radius:10px;flex-shrink:0;display:grid;place-items:center;font-size:36px;color:#fff;opacity:.9}
+/* 文章卡片互动按钮 */
+.post-actions{display:flex;gap:14px;margin-top:10px;align-items:center}
+.post-actions button{background:none;border:none;cursor:pointer;font-size:13px;color:var(--ink-faint);display:flex;align-items:center;gap:4px;padding:4px 8px;border-radius:6px;transition:all .15s}
+.post-actions button:hover{background:var(--bg-sub);color:var(--navy)}
+.post-actions button.liked{color:#e74c3c}
+.post-actions button.faved{color:#f39c12}
+/* 每日小知识条 */
+.daily-tip{background:linear-gradient(135deg,var(--navy),color-mix(in srgb,var(--navy) 70%,#000));color:#fff;border-radius:12px;padding:14px 20px;margin:14px 0;display:flex;align-items:center;gap:12px;font-size:13.5px;line-height:1.6}
+.daily-tip .tip-icon{font-size:22px;flex-shrink:0}
+/* 问答视图 */
+.qa-item{padding:16px;border-bottom:1px solid var(--line)}
+.qa-item h4{font-size:15px;color:var(--navy);margin-bottom:6px}
+.qa-item .qa-meta{font-size:12px;color:var(--ink-faint)}
+.qa-form{background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+/* 数据可视化 */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
+.stat-cell{background:var(--bg-elev);border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center}
+.stat-cell .num{font-family:var(--mono);font-size:24px;font-weight:700;color:var(--navy)}
+.stat-cell .lbl{font-size:12px;color:var(--ink-faint);margin-top:4px}
+.chart-box{background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.chart-box h4{font-size:14px;color:var(--navy);margin-bottom:12px}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px}
+.bar-row .bar-label{width:60px;text-align:right;color:var(--ink-soft)}
+.bar-row .bar-track{flex:1;height:14px;background:var(--bg-sub);border-radius:4px;overflow:hidden}
+.bar-row .bar-fill{height:100%;background:var(--amber);border-radius:4px;transition:width .6s}
+/* 评论区 */
+.comment-box{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+.comment-item{padding:10px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.comment-item .c-user{color:var(--navy);font-weight:600}
+.comment-item .c-time{color:var(--ink-faint);font-size:11px;margin-left:8px}
+/* 我的作品 */
+.work-hero{display:block;background:linear-gradient(135deg,var(--navy),var(--navy-deep));color:#F4F1EA;border-radius:16px;padding:32px;box-shadow:var(--shadow);transition:all .2s;margin-bottom:36px}
+.work-hero:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover)}
+.work-card{display:block;background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:20px 24px;box-shadow:var(--shadow);transition:all .15s}
+.work-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover);border-color:var(--amber)}
+.work-card:hover .work-title{color:var(--amber)}
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="#/" class="logo">
+      <span class="logo-mark">&lt;/&gt;</span>
+      <span>前端札记</span>
+    </a>
+    <nav><ul class="nav-links" id="navLinks">
+      <li><a href="#/" data-route="home">首页</a></li>
+      <li><a href="#/posts" data-route="posts">文章</a></li>
+      <li><a href="#/categories" data-route="categories">分类</a></li>
+      <li><a href="#/archive" data-route="archive">归档</a></li>
+      <li><a href="#/works" data-route="works">作品</a></li>
+      <li><a href="#/about" data-route="about">关于</a></li>
+      <li><a href="#/qa" data-route="qa">问答</a></li>
+    </ul></nav>
+    <div class="nav-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input type="search" id="searchInput" placeholder="搜索文章…">
+    </div>
+    <button class="icon-btn" id="settingsToggle" title="个性化设置">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+    <button class="icon-btn" id="themeToggle" title="切换主题">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+    </button>
+    <div id="loginArea"></div>
+    <button class="nav-cta" id="writeBtn">写文章</button>
+    <button class="icon-btn" id="writeBtn" title="写文章" style="font-weight:700">✏</button>
+    <button class="icon-btn" id="feedbackBtn" title="意见反馈"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
+    <button class="icon-btn nav-burger" id="burgerBtn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="drawer-mask" id="drawerMask"></div>
+<aside class="drawer" id="drawer">
+  <div style="font-family:var(--serif);font-weight:900;font-size:18px;color:var(--navy);margin-bottom:20px">前端札记</div>
+  <a href="#/" data-route="home">首页</a>
+  <a href="#/posts" data-route="posts">文章</a>
+  <a href="#/categories" data-route="categories">分类</a>
+  <a href="#/archive" data-route="archive">归档</a>
+  <a href="#/works" data-route="works">作品</a>
+  <a href="#/about" data-route="about">关于</a>
+  <a href="#/qa" data-route="qa">问答</a>
+  <a href="#/profile" data-route="profile">个人中心</a>
+</aside>
+<!-- 登录注册弹窗 -->
+<div class="modal-mask" id="authModal">
+  <div class="modal">
+    <div class="modal-close" id="modalClose">✕</div>
+    <h2 id="modalTitle">欢迎回来</h2>
+    <p class="sub" id="modalSub">登录后同步你的阅读偏好</p>
+    <form id="authForm" novalidate>
+      <div class="form-group" id="groupName" style="display:none">
+        <label>用户名</label>
+        <input type="text" id="inputName" placeholder="至少 2 个字符" autocomplete="off">
+        <div class="form-error" id="errName"></div>
+      </div>
+      <div class="form-group">
+        <label>邮箱</label>
+        <input type="email" id="inputEmail" placeholder="you@example.com">
+        <div class="form-error" id="errEmail"></div>
+      </div>
+      <div class="form-group">
+        <label>密码</label>
+        <input type="password" id="inputPassword" placeholder="至少 6 位">
+        <div class="form-error" id="errPassword"></div><div class="pwd-strength" id="pwdStrength"><span></span><span></span><span></span><span></span></div><div class="pwd-hint">建议 8 位以上，含大小写字母+数字</div>
+      </div>
+      <div class="form-group" id="groupConfirm" style="display:none">
+        <label>确认密码</label>
+        <input type="password" id="inputConfirm" placeholder="再输一次">
+        <div class="form-error" id="errConfirm"></div>
+      </div>
+      <button type="submit" class="form-submit" id="submitBtn">登录</button>
+    </form>
+    <div class="divider-or">其他方式登录</div>
+    <div class="oauth-row">
+      <button class="oauth-btn oauth-wechat" data-oauth="微信">微</button>
+      <button class="oauth-btn oauth-qq" data-oauth="QQ">Q</button>
+      <button class="oauth-btn oauth-phone" data-oauth="手机号">手</button>
+    </div>
+    <div class="modal-switch" style="margin-top:8px"><a id="forgotLink">忘记密码？</a></div>
+    <div class="modal-switch" id="modalSwitch">还没有账号？<a id="switchToReg">注册新账号</a></div>
+  </div>
+</div>
+
+<!-- 设置抽屉 -->
+<div class="drawer-mask" id="settingsMask"></div>
+<aside class="settings-panel" id="settingsPanel">
+  <h2>个性化设置</h2>
+  <div class="setting-group">
+    <div class="label">主题色</div>
+    <div class="color-dots" id="colorDots"></div>
+  </div>
+  <div class="setting-group">
+    <div class="label">标题字体</div>
+    <div class="option-row" id="fontOptions">
+      <span class="option-chip" data-font="serif">宋体</span>
+      <span class="option-chip" data-font="sans">黑体</span>
+      <span class="option-chip" data-font="mono">等宽</span>
+    </div>
+  </div>
+  <div class="setting-group">
+    <div class="label">正文字号 <span class="range-val" id="sizeVal">16px</span></div>
+    <input type="range" id="sizeSlider" min="14" max="20" step="1" value="16">
+  </div>
+  <div class="setting-group">
+    <div class="label">账户安全</div>
+    <div id="securityBox">
+      <div class="security-item"><span>上次登录</span><span style="font-family:var(--mono);font-size:12px;color:var(--ink-faint)" id="lastLogin">--</span></div>
+      <div class="security-item"><span>密码强度</span><span style="font-family:var(--mono);font-size:12px;color:var(--amber)" id="pwdLevel">未设置</span></div>
+      <div class="security-item"><span>双重验证</span><div class="switch" id="twoFactor"></div></div>
+    </div>
+  </div>
+  <div class="setting-group">
+    <div class="label">外观模式</div>
+    <div class="option-row" id="themeOptions">
+      <span class="option-chip" data-theme="light">浅色</span>
+      <span class="option-chip" data-theme="dark">深色</span>
+    </div>
+  </div>
+</aside>
+
+<!-- 写文章弹窗 -->
+<div class="modal-mask" id="writeModal">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-close" data-close="writeModal">X</div>
+    <h2>写文章</h2>
+    <p class="sub">分享你的技术笔记</p>
+    <form id="writeForm" novalidate>
+      <div class="form-group">
+        <label>标题</label>
+        <input type="text" id="wTitle" placeholder="给文章起个标题">
+        <div class="form-error" id="wTitleErr"></div>
+      </div>
+      <div class="form-group">
+        <label>分类</label>
+        <select id="wCat">
+          <option value="CSS">CSS</option>
+          <option value="JavaScript">JavaScript</option>
+          <option value="React">React</option>
+          <option value="工程化">工程化</option>
+          <option value="TypeScript">TypeScript</option>
+          <option value="随笔">随笔</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>封面图（选填）</label>
+        <div id="wCover" style="border:2px dashed var(--line);border-radius:8px;padding:16px;text-align:center;cursor:pointer">
+          <div style="font-size:12px;color:var(--ink-faint)">点击上传封面图</div>
+          <input type="file" id="wCoverFile" accept="image/*" style="display:none">
+        </div>
+        <div id="wCoverPreview" style="margin-top:8px"></div>
+      </div>
+      <div class="form-group">
+        <label>摘要（选填，100 字以内）</label>
+        <textarea id="wExcerpt" rows="2" placeholder="一句话概括这篇文章讲什么..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>标签（逗号分隔）</label>
+        <input type="text" id="wTags" placeholder="如：CSS, Grid, 布局">
+      </div>
+
+      <div class="form-group">
+        <label>正文</label>
+        <textarea id="wContent" rows="8" placeholder="开始写吧...支持简单的 HTML 标签"></textarea>
+        <div class="form-error" id="wContentErr"></div>
+      </div>
+      <button type="submit" class="form-submit">发布文章</button>
+    </form>
+  </div>
+</div>
+<!-- 忘记密码弹窗 -->
+<div class="modal-mask" id="forgotModal">
+  <div class="modal">
+    <div class="modal-close" data-close="forgotModal">X</div>
+    <h2>找回密码</h2>
+    <p class="sub" id="forgotStep1">输入注册邮箱，我们会发送验证码</p>
+    <p class="sub" id="forgotStep2" style="display:none">输入收到的验证码和新密码</p>
+    <form id="forgotForm" novalidate>
+      <div class="form-group" id="fgEmailGroup">
+        <label>注册邮箱</label>
+        <input type="email" id="fgEmail" placeholder="you@example.com">
+        <div class="form-error" id="fgEmailErr"></div>
+      </div>
+      <div class="form-group" id="fgCodeGroup" style="display:none">
+        <label>验证码</label>
+        <input type="text" id="fgCode" placeholder="6 位验证码" maxlength="6">
+        <div class="form-error" id="fgCodeErr"></div>
+      </div>
+      <div class="form-group" id="fgPwdGroup" style="display:none">
+        <label>新密码</label>
+        <input type="password" id="fgPwd" placeholder="至少 8 位，含大小写+数字">
+        <div class="form-error" id="fgPwdErr"></div>
+      </div>
+      <button type="submit" class="form-submit" id="fgSubmit">发送验证码</button>
+    </form>
+  </div>
+</div>
+
+<!-- 反馈弹窗 -->
+<div class="modal-mask" id="feedbackModal">
+  <div class="modal">
+    <div class="modal-close" data-close="feedbackModal">X</div>
+    <h2>意见反馈</h2>
+    <p class="sub">你的建议会让这个博客变得更好</p>
+    <form id="feedbackForm" novalidate>
+      <div class="form-group">
+        <label>反馈类型</label>
+        <select id="fbType">
+          <option value="建议">功能建议</option>
+          <option value="bug">Bug 报告</option>
+          <option value="内容">内容问题</option>
+          <option value="其他">其他</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>详细描述</label>
+        <textarea id="fbContent" rows="4" placeholder="请描述你遇到的问题或建议..."></textarea>
+        <div class="form-error" id="fbContentErr"></div>
+      </div>
+      <div class="form-group">
+        <label>联系方式（选填）</label>
+        <input type="text" id="fbContact" placeholder="邮箱或 QQ">
+      </div>
+      <div class="form-group">
+        <label>附件（选填，图片或视频）</label>
+        <div id="fbUpload" style="border:2px dashed var(--line);border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:border-color .15s">
+          <div style="font-size:28px;color:var(--ink-faint);margin-bottom:6px">+</div>
+          <div style="font-size:13px;color:var(--ink-faint)">点击上传截图或录屏（演示用，仅本地预览）</div>
+          <input type="file" id="fbFile" accept="image/*,video/*" style="display:none">
+        </div>
+        <div id="fbPreview" style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"></div>
+      </div>
+      <button type="submit" class="form-submit">提交反馈</button>
+    </form>
+  </div>
+</div>
+
+
+<!-- ============ 视图：首页 ============ -->
+<section class="view" id="view-home">
+  <section class="hero">
+    <div class="hero-eyebrow">Frontend Notes · 第 47 期</div>
+    <h1>把浏览器里的每一行代码，<br>写成<span id="typeTarget"></span><span class="type-cursor"></span></h1>
+    <p class="hero-sub">一个前端工程师的自留地：CSS 布局、React 原理、Vite 构建、浏览器渲染——不堆术语，只讲我真正踩过的坑。</p>
+    <div class="hero-meta">
+      <span>已发布 <b id="statPosts">--</b> 篇</span>
+      <span>分类 <b id="statCats">--</b> 个</span>
+      <span>最近更新 <b>2026-10-18</b></span>
+    </div>
+  </section>
+  <div class="layout">
+    <div class="feed" id="homeFeed"></div>
+    <aside class="sidebar">
+      <div class="widget">
+        <h3>关于我</h3>
+        <p style="font-size:14px;color:var(--ink-soft);line-height:1.75">一枚写了六年前端的工程师，目前在做数据可视化方向。喜欢把复杂的东西写简单。</p>
+      </div>
+      <div class="widget">
+        <h3>热门标签</h3>
+        <div class="tag-list" id="sideTags"></div>
+      </div>
+      <div class="widget">
+        <h3>本周最热</h3>
+        <ol class="hot-list" id="hotList"></ol>
+      </div>
+      <div class="about-card">
+        <h3 style="color:var(--bg);border-bottom:1px solid color-mix(in srgb,var(--bg) 20%,transparent);padding-bottom:10px;margin-bottom:14px;font-family:var(--serif);font-size:16px">订阅更新</h3>
+        <p>每月一封邮件，只发一篇我认为值得读的长文。不打扰，不群发。</p>
+        <div class="social">
+          <a data-social="GitHub">GH</a>
+          <a data-social="掘金">JM</a>
+          <a data-social="知乎">ZH</a>
+          <a data-social="RSS">RSS</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ 视图：全部文章 ============ -->
+<section class="view" id="view-posts">
+  <div style="max-width:var(--max);margin:0 auto;padding:48px 24px 80px">
+    <h1 style="font-family:var(--serif);font-size:36px;font-weight:900;color:var(--navy);margin-bottom:8px">全部文章</h1>
+    <p style="color:var(--ink-soft);margin-bottom:32px" id="postsCount"></p>
+    <div id="allPosts"></div>
+  </div>
+</section>
+
+<!-- ============ 视图：分类 ============ -->
+<section class="view" id="view-categories">
+  <div style="max-width:var(--max);margin:0 auto;padding:48px 24px 80px">
+    <h1 style="font-family:var(--serif);font-size:36px;font-weight:900;color:var(--navy);margin-bottom:8px">文章分类</h1>
+    <p style="color:var(--ink-soft);margin-bottom:24px">按主题浏览我的笔记</p>
+    <div class="cat-grid" id="catGrid"></div>
+  </div>
+</section>
+
+<!-- ============ 视图：归档 ============ -->
+<section class="view" id="view-archive">
+  <div style="max-width:820px;margin:0 auto;padding:48px 24px 80px">
+    <h1 style="font-family:var(--serif);font-size:36px;font-weight:900;color:var(--navy);margin-bottom:32px">归档</h1>
+    <div id="archiveList"></div>
+  </div>
+</section>
+
+<!-- ============ 视图：我的作品 ============ -->
+<section class="view" id="view-works">
+  <div style="max-width:900px;margin:0 auto;padding:48px 24px 80px">
+    <h1 style="font-family:var(--serif);font-size:36px;font-weight:900;color:var(--navy);margin-bottom:8px">我的作品</h1>
+    <p style="color:var(--ink-soft);margin-bottom:32px">我的个人技术博客，在 CSDN 持续记录学习过程</p>
+
+    <a class="work-hero" href="https://blog.csdn.net/2601_96964027?type=blog" target="_blank" rel="noopener">
+      <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+        <div style="width:64px;height:64px;border-radius:14px;background:var(--amber);display:grid;place-items:center;font-family:var(--serif);font-weight:900;font-size:26px;color:#fff;flex-shrink:0">枫</div>
+        <div style="flex:1;min-width:200px">
+          <div style="font-family:var(--serif);font-weight:900;font-size:22px;margin-bottom:4px">晴天遇见枫 · CSDN 博客</div>
+          <div style="font-size:13.5px;opacity:.85">Python / FastAPI / 学习笔记 · 2026 年 9 月开始创作</div>
+        </div>
+        <div style="font-size:13px;background:rgba(255,255,255,.14);padding:8px 16px;border-radius:8px;font-weight:500;flex-shrink:0">访问博客 →</div>
+      </div>
+      <div style="display:flex;gap:36px;margin-top:26px;flex-wrap:wrap">
+        <div><div style="font-family:var(--mono);font-size:24px;font-weight:700" id="worksCount">5</div><div style="font-size:12.5px;opacity:.8">原创文章</div></div>
+        <div><div style="font-family:var(--mono);font-size:24px;font-weight:700">894</div><div style="font-size:12.5px;opacity:.8">总访问量</div></div>
+        <div><div style="font-family:var(--mono);font-size:24px;font-weight:700">18</div><div style="font-size:12.5px;opacity:.8">获赞</div></div>
+        <div><div style="font-family:var(--mono);font-size:24px;font-weight:700">26</div><div style="font-size:12.5px;opacity:.8">被收藏</div></div>
+      </div>
+      <div style="font-size:11.5px;opacity:.65;margin-top:14px">访问数据为 2026-10-22 快照 · 下方文章列表每天自动与 CSDN 博客同步</div>
+    </a>
+
+    <h2 style="font-family:var(--serif);font-size:22px;font-weight:900;color:var(--navy);margin-bottom:18px">博客文章 <span id="worksUpdated" style="font-size:13px;font-weight:400;color:var(--ink-faint);font-family:var(--mono)"></span></h2>
+    <div id="worksList" style="display:flex;flex-direction:column;gap:14px"></div>
+    <p style="margin-top:28px;text-align:center;font-size:13.5px;color:var(--ink-faint)">更多内容持续更新中 · <a href="https://blog.csdn.net/2601_96964027?type=blog" target="_blank" rel="noopener" style="color:var(--amber);font-weight:500">在 CSDN 关注我 →</a></p>
+  </div>
+</section>
+<script>
+(function(){
+  var FALLBACK={updated:'2026-10-22',articles:[
+    {title:'FastAPI 学习笔记｜搞懂两种接口请求方式',url:'https://blog.csdn.net/2601_96964027/article/details/168026652',date:'2026-10-17',excerpt:'GET 与 POST 接口的核心区别：GET 通过网址传参适合公开查询，POST 隐藏参数更安全且支持大容量数据；附接口设计与调试的踩坑记录。'},
+    {title:'Python 异常处理｜笔记',url:'https://blog.csdn.net/2601_96964027/article/details/166833982',date:'2026-09-30',excerpt:'用 try-except 捕获运行时错误，结合 else 和 finally 实现优雅的错误处理流程，避免裸 except，写出更健壮的程序。'},
+    {title:'Python 学习笔记：自定义函数 def',url:'https://blog.csdn.net/2601_96964027/article/details/166734162',date:'2026-09-27',excerpt:'从定义到调用，带参数与不带参数的函数写法练习，打好函数式编程基础。'},
+    {title:'Python 学习笔记 — 列表 list 的增删改查',url:'https://blog.csdn.net/2601_96964027/article/details/165739879',date:'2026-09-17',excerpt:'列表的增、删、改、查四类核心操作一遍过，Python 最常用数据结构的入门实战。'},
+    {title:'Python 入门｜while 循环：原理干货 + 实战运用练习',url:'https://blog.csdn.net/2601_96964027/article/details/165123636',date:'2026-09-12',excerpt:'初始化、条件判断、变量更新三步法避免死循环，结合素数判断与求和练习巩固循环逻辑，附常见错误复盘。'}
+  ]};
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  function render(data){
+    if(!data||!data.articles||!data.articles.length)data=FALLBACK;
+    var cnt=document.getElementById('worksCount');if(cnt)cnt.textContent=data.articles.length;
+    var up=document.getElementById('worksUpdated');if(up&&data.updated)up.textContent='· 同步于 '+data.updated;
+    document.getElementById('worksList').innerHTML=data.articles.map(function(a){
+      return '<a class="work-card" href="'+esc(a.url)+'" target="_blank" rel="noopener">'
+        +'<div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start"><div style="min-width:0">'
+        +'<h3 class="work-title" style="font-family:var(--serif);font-size:18px;font-weight:700;margin-bottom:6px;line-height:1.5;transition:color .15s">'+esc(a.title)+'</h3>'
+        +(a.excerpt?'<p style="font-size:14px;color:var(--ink-soft);line-height:1.7;margin-bottom:10px">'+esc(a.excerpt)+'</p>':'')
+        +'<div style="font-size:12.5px;color:var(--ink-faint);font-family:var(--mono)">'+esc(a.date)+'</div>'
+        +'</div><span style="flex-shrink:0;font-size:12px;color:var(--amber);border:1px solid var(--amber);border-radius:6px;padding:4px 10px;font-weight:500">CSDN ↗</span></div></a>';
+    }).join('');
+  }
+  render(FALLBACK);
+  fetch('works.json?t='+Date.now()).then(function(r){if(!r.ok)throw new Error(r.status);return r.json()}).then(render).catch(function(){});
+})();
+</script>
+
+<!-- ============ 视图：关于 ============ -->
+<section class="view" id="view-about">
+  <div class="about-page">
+    <h1>关于我</h1>
+    <p>你好，我是这篇博客的作者，一个写了六年前端的工程师。</p>
+    <p>这个博客开始于 2020 年，最初只是我给自己记的学习笔记。后来发现把踩过的坑写下来，既能帮自己复盘，也能帮到搜答案的人，就一直写到了现在。</p>
+    <p>我主要写这些话题：CSS 布局与动画、React 生态、TypeScript、构建工具（Vite / Webpack）、浏览器原理、Node.js 服务端，以及偶尔的工程化思考。</p>
+    <p>如果你想找我，最方便的方式是在 GitHub 或掘金上留言。文章里的代码都可以随便用，不用打招呼。</p>
+  </div>
+</section>
+
+
+<!-- ============ 视图：用户中心 ============ -->
+<section class="view" id="view-profile">
+  <div id="userStats"></div>
+  <div style="max-width:900px;margin:0 auto;padding:48px 24px 80px">
+    <h1 style="font-family:var(--serif);font-size:32px;font-weight:900;color:var(--navy);margin-bottom:8px">个人中心</h1>
+    <p style="color:var(--ink-soft)">管理你的资料、浏览历史和阅读统计</p>
+    <div id="profileContent"></div>
+  </div>
+</section>
+
+<!-- ============ 视图：文章详情 ============ -->
+<section class="view" id="view-qa">
+  <div class="container">
+    <h2 style="font-family:var(--serif);font-size:28px;color:var(--navy);margin:20px 0 6px">问答广场</h2>
+    <p style="color:var(--ink-faint);font-size:13px;margin-bottom:16px">有问题尽管问，这里有人帮你解答</p>
+    <div class="qa-form">
+      <input type="text" id="qaInput" placeholder="输入你的问题..." style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-size:14px;margin-bottom:8px">
+      <button class="form-submit" id="qaSubmit">发布问题</button>
+    </div>
+    <div id="qaList"></div>
+  </div>
+</section>
+<section class="view" id="view-detail">
+  <div class="post-detail" id="detailContent"></div>
+</section>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div style="color:#fff;font-family:var(--serif);font-weight:700;margin-bottom:6px">前端札记 · Frontend Notes</div>
+      <div>用最朴素的方式记录前端成长。</div>
+    </div>
+    <div class="mono">© 2020–2026 · Built with vanilla HTML/CSS/JS</div>
+  </div>
+</footer>
+
+<button class="back-top" id="backTop">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<script>
+/* ============ 数据 ============ */
+/* ===== 新增功能：点赞/收藏/评论/每日知识/问答/统计图表 ===== */
+function getData(k,d){ try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d} }
+function setData(k,v){ localStorage.setItem(k,JSON.stringify(v)) }
+function getLikes(){ return getData('fb_likes',{}) }
+function getFavs(){ return getData('fb_favs',[]) }
+function getComments(){ return getData('fb_comments',{}) }
+function getReadCount(){ return getData('fb_reads',{}) }
+
+
+function postActionsHtml(id){
+  const likes=getLikes()[id]||Math.floor(Math.random()*200+30);
+  const favs=getFavs().includes(id);
+  const comments=getComments()[id]||[];
+  const reads=getReadCount()[id]||Math.floor(Math.random()*500+100);
+  return '<div class="post-actions" data-pid="'+id+'">'+
+    '<button class="act-like'+(getLikes()[id]?' liked':'')+'">♡ <span class="n">'+likes+'</span></button>'+
+    '<button class="act-fav'+(favs?' faved':'')+'">★ 收藏</button>'+
+    '<button class="act-cmt">💬 '+comments.length+' 评论</button>'+
+    '<button class="act-read">👁 '+reads+' 阅读</button>'+
+    '<button class="act-dl">⬇ 下载</button>'+
+  '</div>';
+}
+
+// 绑定互动按钮
+function bindPostActions(){
+  $$('.post-actions').forEach(box=>{
+    const id=parseInt(box.dataset.pid,10);
+    box.querySelector('.act-like').onclick=function(e){
+      e.stopPropagation();
+      const likes=getLikes();
+      if(this.classList.contains('liked')){ likes[id]--; this.classList.remove('liked'); }
+      else{ likes[id]=(likes[id]||30)+1; this.classList.add('liked'); toast('已点赞'); }
+      setData('fb_likes',likes);
+      this.querySelector('.n').textContent=likes[id];
+    };
+    box.querySelector('.act-fav').onclick=function(e){
+      e.stopPropagation();
+      let favs=getFavs();
+      if(this.classList.contains('faved')){ favs=favs.filter(x=>x!==id); this.classList.remove('faved'); toast('已取消收藏'); }
+      else{ favs.push(id); this.classList.add('faved'); toast('已加入收藏'); }
+      setData('fb_favs',favs);
+    };
+    box.querySelector('.act-cmt').onclick=function(e){
+      e.stopPropagation();
+      location.hash='#/post/'+id;
+      setTimeout(()=>document.getElementById('commentAnchor')&&document.getElementById('commentAnchor').scrollIntoView({behavior:'smooth'}),300);
+    };
+    box.querySelector('.act-dl').onclick=function(e){
+      e.stopPropagation();
+      const post=POSTS.find(p=>p.id===id);
+      if(!post) return;
+      const blob=new Blob([post.title+'\n\n'+post.content.replace(/<[^>]+>/g,'\n')],{type:'text/plain;charset=utf-8'});
+      const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=post.title+'.txt'; a.click();
+      toast('已下载文章');
+    };
+  });
+}
+
+
+const DAILY_TIPS=[
+  "CSS 中 :root 等价于 html，但特异性更高。",
+  "用 console.table() 打印对象比 console.log 清晰十倍。",
+  "flex:1 实际是 flex-grow:1;flex-shrink:1;flex-basis:0% 的简写。",
+  "CSS 变量在:root 上定义，子元素用 var() 读取。",
+  "用 defer 加载脚本，DOM 解析完才执行，不阻塞渲染。",
+  "数组 includes 比 indexOf>-1 更语义化。",
+  "localStorage 只能存字符串，对象要 JSON.stringify。",
+  "浏览器缓存通过 ETag 和 Last-Modified 判断资源是否变更。",
+  "debounce 用于搜索输入，throttle 用于滚动事件。",
+  "CSS Grid 的 fr 单位是剩余空间的分数，不是固定值。"
+];
+let tipIdx=0;
+function renderDailyTip(){
+  tipIdx=(tipIdx+1)%DAILY_TIPS.length;
+  return '<div class="daily-tip"><span class="tip-icon">💡</span><div><b>前端小知识</b>　<span id="tipText">'+DAILY_TIPS[tipIdx]+'</span></div></div>';
+}
+setInterval(()=>{
+  tipIdx=(tipIdx+1)%DAILY_TIPS.length;
+  const t=$('#tipText'); if(t) t.textContent=DAILY_TIPS[tipIdx];
+},60000);
+const POSTS = [
+  {id:1,cat:'CSS',date:'2026-10-12',readMin:12,featured:true,
+   title:'CSS Grid 布局完全指南：从一维思维到二维栅格的跨越',
+   tags:['CSS','布局'],
+   excerpt:'Flexbox 解决了一维，Grid 才真正解决了二维。这篇文章用 12 个可运行的例子，把 fr、minmax、auto-fill、named lines 这些容易混的概念一次讲透。',
+   content:`<p>很多人学了 Flexbox 之后就觉得布局问题解决了，直到遇到"左边定宽、右边自适应、中间还要跨列"这种需求，才发现 Flexbox 天生就是一维的——它要么安排一行，要么安排一列。</p>
+<h2>Grid 是真正的二维系统</h2>
+<p>Grid 让你同时定义行和列，容器本身就是一个栅格：</p>
+<pre><code>.container {
+  display: grid;
+  grid-template-columns: 200px 1fr 200px;
+  grid-template-rows: auto 1fr auto;
+  gap: 16px;
+}</code></pre>
+<p>上面这段代码直接把容器分成了三列三行：左右两侧固定 200px，中间自适应；上下自适应。这在 Flexbox 里要嵌套两层才能做到。</p>
+<h2>fr 不是百分比</h2>
+<p><code>fr</code> 是 fraction（份额）的意思，它会先扣除固定宽度的轨道，再把剩余空间按比例分给 fr 轨道。所以 <code>1fr 2fr</code> 不是 33% 和 66%，而是"去掉固定部分后剩下的空间，按 1:2 分"。</p>
+<blockquote>经验：能用 fr 就别用 %，因为 fr 会自动处理 gap 和 minmax 的最小值问题。</blockquote>
+<h2>auto-fill vs auto-fit</h2>
+<p>这两个经常混。简单记：<strong>fill 保留空轨道，fit 折叠空轨道</strong>。做响应式卡片墙时，<code>repeat(auto-fit, minmax(240px, 1fr))</code> 才是你要的。</p>`},
+  {id:2,cat:'React',date:'2026-10-18',readMin:8,
+   title:'React 19 到底改了什么：Server Components、Actions 与自动 batching 重梳',
+   tags:['React','新特性'],
+   excerpt:'升级了半个月，把官方 changelog 拆成了三块真正影响写法的东西：不用再手写 useRef 的 Actions、流式 SSR 的新边界、以及并发特性里那些"以前是坑现在是默认"的行为。',
+   content:`<p>React 19 不是一个破坏性升级，但它悄悄改了很多默认行为。这篇只讲我升级项目时真正踩到的三处。</p>
+<h2>Actions：表单不用再写 onSubmit + preventDefault</h2>
+<p>以前写表单是这样：受控组件一堆 useState，提交时手动 preventDefault。现在可以直接把异步函数传给 form action：</p>
+<pre><code>function SearchForm() {
+  return (
+    &lt;form action={async (formData) =&gt; {
+      await search(formData.get('q'));
+    }}&gt;
+      &lt;input name="q" /&gt;
+    &lt;/form&gt;
+  );
+}</code></pre>
+<p>React 自动处理 pending 状态、错误边界、和乐观更新。</p>
+<h2>use() 可以读 Promise</h2>
+<p>在组件渲染过程中直接 <code>const data = use(fetchData())</code>，React 会自动挂起（suspend）这棵子树直到数据就绪。配合 Streaming SSR，首屏体验会有质的提升。</p>
+<blockquote>注意：use() 只能在组件或自定义 Hook 里用，而且传进去的 Promise 最好缓存一下，别每次渲染都 new 一个。</blockquote>`},
+  {id:3,cat:'构建工具',date:'2026-10-05',readMin:10,
+   title:'Vite 构建优化实录：把首屏包从 1.8MB 压到 420KB 的七步',
+   tags:['Vite','性能优化','工程化'],
+   excerpt:'从依赖预构建、manualChunks、路由懒加载到产物分析工具，记录一次真实项目的体积优化全过程，每一步都给了前后对比数字。',
+   content:`<p>我们项目首屏包曾经到了 1.8MB（gzip 后 480KB），在 4G 网络下白屏要 3 秒。这篇记录优化全过程。</p>
+<h2>第一步：先看清楚体积去哪了</h2>
+<p>用 <code>rollup-plugin-visualizer</code> 生成产物地图，一眼就能看到哪个包在占地方。我们当时最大的三块是：echarts（620KB）、moment（180KB）、lodash-es（150KB）。</p>
+<h2>第二步：该换的换</h2>
+<p>moment 换成 dayjs，瞬间少 170KB。lodash-es 换成按需引入或直接用原生方法。echarts 改成只引入需要的图表模块：</p>
+<pre><code>import * as echarts from 'echarts/core';
+import { BarChart, LineChart } from 'echarts/charts';
+import { GridComponent, TooltipComponent } from 'echarts/components';
+echarts.use([BarChart, LineChart, GridComponent, TooltipComponent]);</code></pre>
+<h2>第三步：路由懒加载</h2>
+<p>把每个路由组件改成 <code>React.lazy</code>，首屏只加载当前路由的代码。这一步直接把主包砍了一半。</p>
+<blockquote>结果：主包 420KB（gzip 120KB），首屏白屏时间从 3s 降到 800ms。</blockquote>`},
+  {id:4,cat:'JavaScript',date:'2026-09-28',readMin:6,
+   title:'JavaScript 闭包：别再背定义，画一张内存图就懂了',
+   tags:['JavaScript','基础'],
+   excerpt:'面试常被问的闭包，本质是函数对象与词法环境的引用关系。用三张图把作用域链、GC 与常见误用讲清楚。',
+   content:`<p>闭包这个概念，教科书的定义是"函数和其周围状态的引用捆绑在一起"。这句话背了也没用。</p>
+<h2>本质一句话</h2>
+<p>闭包就是：<strong>内层函数记住了它定义时所在的外层变量，哪怕外层函数已经执行完了</strong>。</p>
+<pre><code>function outer() {
+  let count = 0;
+  return function inner() {
+    count++;
+    console.log(count);
+  };
+}
+const fn = outer();
+fn(); // 1
+fn(); // 2</code></pre>
+<p>outer 执行完本来该销毁 count，但 inner 还引用着它，所以 GC 不会回收。</p>
+<h2>最常见的坑</h2>
+<p>循环里用 var + setTimeout，打印出来全是最后一个值。原因就是所有回调共享同一个 i。用 let 或者立即执行函数就能解决。</p>`},
+  {id:5,cat:'TypeScript',date:'2026-09-20',readMin:9,
+   title:'TypeScript 类型体操入门：从 Partial 到 Tail，掌握 5 个内置工具类型',
+   tags:['TypeScript','类型系统'],
+   excerpt:'不需要一上来就啃高级类型。先把 Partial、Pick、Omit、Exclude、ReturnType 这五个用熟，日常业务就够用了。',
+   content:`<p>很多人对 TS 的恐惧来自"类型体操"这四个字。其实日常业务里 90% 的场景，五个内置工具类型就够了。</p>
+<h2>Partial：把所有属性变成可选</h2>
+<pre><code>interface User { name: string; age: number; }
+type PartialUser = Partial&lt;User&gt;;
+// { name?: string; age?: number; }</code></pre>
+<p>更新接口入参最常用——你不需要传整个 User，只传要改的字段就行。</p>
+<h2>Pick 和 Omit：裁剪属性</h2>
+<pre><code>type UserPreview = Pick&lt;User, 'name'&gt;;       // 只留 name
+type UserWithoutAge = Omit&lt;User, 'age'&gt;;     // 去掉 age</code></pre>
+<h2>ReturnType：拿到函数的返回类型</h2>
+<pre><code>function getUser() { return { id: 1, name: 'a' }; }
+type User = ReturnType&lt;typeof getUser&gt;;
+// { id: number; name: string; }</code></pre>
+<blockquote>这五个练熟之后，再去看 Parameters、Awaited、Required，会发现都是一个套路。</blockquote>`},
+  {id:6,cat:'浏览器',date:'2026-09-11',readMin:14,
+   title:'浏览器渲染原理：从 URL 输入到像素上屏，中间发生了什么',
+   tags:['浏览器','性能优化'],
+   excerpt:'把 Navigation、Parsing、Layout、Paint、Composite 五个阶段串成一条时间线，解释为什么"改 transform 比改 width 快"。',
+   content:`<p>当你在地址栏输入 URL 按下回车，到屏幕上出现第一个像素，中间发生了什么？这篇按顺序讲清楚。</p>
+<h2>五个阶段</h2>
+<p><strong>Navigation</strong>：DNS 解析 → TCP 连接 → HTTP 请求 → 服务器返回 HTML。</p>
+<p><strong>Parsing</strong>：浏览器把 HTML 解析成 DOM 树，CSS 解析成 CSSOM，合成渲染树（Render Tree）。注意：head 里的 script 会阻塞解析，除非加 async/defer。</p>
+<p><strong>Layout</strong>：计算每个元素的几何位置（宽、高、x、y）。改 width、height、padding 都会触发 Layout。</p>
+<p><strong>Paint</strong>：把颜色、阴影、文字画到图层上。改 color、background 会触发 Paint 但不触发 Layout。</p>
+<p><strong>Composite</strong>：把所有图层合成最终画面。改 transform、opacity 只触发 Composite——这就是为什么 transform 动画最丝滑。</p>
+<blockquote>记住一个优先级：Composite &lt; Paint &lt; Layout。做动画时优先用 transform 和 opacity，让浏览器走最快路径。</blockquote>`},
+  {id:7,cat:'Node.js',date:'2026-08-30',readMin:11,
+   title:'Node.js 流式处理：当你还在 JSON.parse 整个文件时，别人已经在背压了',
+   tags:['Node.js','流'],
+   excerpt:'读写大文件、日志处理、SSE 推送——stream 是 Node 里最被低估的核心模块。一篇入门 + 三个实战片段。',
+   content:`<p>处理一个 2GB 的日志文件，如果你用 fs.readFile 一次性读进来，进程内存直接爆掉。Stream 就是为这种场景设计的。</p>
+<h2>Stream 的核心思想</h2>
+<p>数据不是一次性全部到达，而是一块一块地流。你用 pipe() 把可读流接到可写流，Node 自动处理背压（backpressure）——下游写得慢，上游就暂停。</p>
+<pre><code>const fs = require('fs');
+fs.createReadStream('big.log')
+  .pipe(fs.createWriteStream('copy.log'));</code></pre>
+<h2>实战：SSE 推送</h2>
+<p>Server-Sent Events 本质就是一个可读流。在 Express 里：</p>
+<pre><code>res.writeHead(200, {
+  'Content-Type': 'text/event-stream',
+  'Cache-Control': 'no-cache',
+});
+setInterval(() =&gt; {
+  res.write('data: ' + JSON.stringify({ t: Date.now() }) + '\n\n');
+}, 1000);</code></pre>`},
+  {id:8,cat:'CSS',date:'2026-08-18',readMin:7,
+   title:'CSS :has() 选择器实战：8 个以前要写 JS 的场景',
+   tags:['CSS','选择器'],
+   excerpt:':has() 被称为"父选择器"，浏览器支持之后，以前需要 JS 判断的状态样式现在纯 CSS 就能搞定。',
+   content:`<p>CSS 终于有了父选择器。:has() 可以选"包含某个子元素的父元素"。</p>
+<h2>场景 1：表单校验状态</h2>
+<pre><code>.field:has(input:invalid) {
+  border-color: #e74c3c;
+}</code></pre>
+<p>不用 JS 监听 input 事件了。</p>
+<h2>场景 2：空状态提示</h2>
+<pre><code>.list:has(li:empty)::after {
+  content: "暂无数据";
+}</code></pre>
+<h2>场景 3：图片加载失败占位</h2>
+<pre><code>.card:has(img:not([src])) .cover {
+  background: #f0f0f0;
+}</code></pre>
+<blockquote>注意：:has() 在性能敏感的大列表上别滥用，它会触发额外的选择器匹配。</blockquote>`},
+  {id:9,cat:'React',date:'2026-08-05',readMin:13,
+   title:'React Compiler 上线后，useMemo 还有必要吗',
+   tags:['React','性能'],
+   excerpt:'React Compiler 自动记忆化之后，手写 useMemo / useCallback 是不是可以退休了？我的结论是：大部分场景可以，但有两个例外。',
+   content:`<p>React Compiler 的目标是自动给组件做记忆化，让你不用再手写 useMemo、useCallback、React.memo。</p>
+<h2>它解决了什么</h2>
+<p>以前性能优化靠人肉：哪个 props 没变？哪个函数引用变了？现在 Compiler 在编译时自动分析，给所有纯组件加上记忆化。</p>
+<h2>什么场景还要手写</h2>
+<p><strong>大列表渲染</strong>：即使有 Compiler，渲染 1000 行还是要 1000 次 reconciler 工作。虚拟列表（react-virtualized）仍然是必需的。</p>
+<p><strong>昂贵计算</strong>：useMemo 包一个 O(n²) 的计算，Compiler 不一定能自动判断出"这个值不需要重算"。关键路径上的显式记忆化仍然值得。</p>
+<blockquote>结论：新代码放心不写 useMemo，老代码也别急着删，跑了再看 profile。</blockquote>`},
+  {id:10,cat:'工程化',date:'2026-07-22',readMin:15,
+   title:'写了三年组件库，总结 10 个设计原则',
+   tags:['组件库','设计原则'],
+   excerpt:'从 API 设计到可访问性，总结我在维护一个 30 人团队共用组件库时踩过的坑。',
+   content:`<p>组件库不是把 UI 拼起来就行。它要服务几十个业务方，API 一旦定下来就很难改。</p>
+<h2>原则 1：组合优于配置</h2>
+<p>别做一个 Button 组件带 20 个 boolean prop。用组合：<code>&lt;Button variant="primary" size="lg" /&gt;</code> 比 <code>&lt;Button primary large rounded /&gt;</code> 好维护。</p>
+<h2>原则 2：受控和非受控都要支持</h2>
+<p>表单组件必须支持两种用法：自己管状态（非受控）和外部传 value + onChange（受控）。</p>
+<h2>原则 3：容器组件不要假设尺寸</h2>
+<p>Dialog、Drawer 不要写死宽高。让外部用 className 或 style 覆盖。</p>
+<blockquote>剩下 7 条：可访问性（aria 标签）、键盘导航、主题 token、SSR 兼容、Tree-shaking、版本策略、文档即示例。</blockquote>`},
+  {id:11,cat:'TypeScript',date:'2026-07-10',readMin:8,
+   title:'为什么我放弃了 Tailwind，回到了 CSS Modules',
+   tags:['CSS','工程化','反思'],
+   excerpt:'用了一年 Tailwind 之后，我把它从主项目里移除了。不是它不好，而是它不适合我们团队的规模和组件复用场景。',
+   content:`<p>Tailwind 是个好工具，但它不是银弹。我在三个项目里用过它，最后在主项目里换回了 CSS Modules。</p>
+<h2>Tailwind 的问题</h2>
+<p><strong>重复 class 爆炸</strong>：一个按钮写 <code>px-4 py-2 bg-blue-500 rounded text-white hover:bg-blue-600</code>，十个按钮就是十遍。</p>
+<p><strong>重构噩梦</strong>：要改一个间距，得全局搜 px-4 然后判断哪些要改哪些不要。</p>
+<p><strong>设计系统断层</strong>：设计师给的 token 是 primary-500，你在 class 里写 bg-blue-500，对不上。</p>
+<h2>CSS Modules 的好处</h2>
+<p>class 名是局部作用域的，不用担心污染。写起来和普通 CSS 一样，但有 hash 隔离。配合 SCSS 变量做主题，比 Tailwind 更贴近设计 token。</p>
+<blockquote>不是 Tailwind 错了——它特别适合快速原型、营销页、单人项目。只是我们这种有设计系统、有组件库的团队，CSS Modules 更顺手。</blockquote>`},
+  {id:12,cat:'随笔',date:'2026-06-28',readMin:5,
+   title:'一个前端工程师的阅读清单：2026 年中总结',
+   tags:['随笔','书单'],
+   excerpt:'今年上半年读完的技术书和对我影响最大的三篇文章，附我的读后感。',
+   content:`<p>年中整理一下今年读过的东西。</p>
+<h2>技术书</h2>
+<p><strong>《设计系统》</strong>（Alla Kholmatova）—— 不讲具体组件，讲设计系统的思维方式。对我做组件库帮助最大。</p>
+<p><strong>《JavaScript 高级程序设计（第4版）》</strong>—— 当字典翻。遇到不熟悉的 API 就查一章。</p>
+<h2>影响最大的三篇文章</h2>
+<p>1. Philip Walton 的《Loading Web Pages》—— 讲浏览器加载性能的经典。</p>
+<p>2. Dan Abramov 的《The Declarative Nature of React》—— 把声明式讲透了。</p>
+<p>3. 一篇讲 CSS containment 的—— 以前不知道 <code>contain: layout paint</code> 能这么有效地隔离渲染。</p>`}
+];
+
+/* ============ 工具 ============ */
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function toast(msg){
+  let t = $('.toast');
+  if(!t){ t = document.createElement('div'); t.className='toast'; document.body.appendChild(t); }
+  t.textContent = msg;
+  requestAnimationFrame(()=>t.classList.add('show'));
+  clearTimeout(t._timer);
+  t._timer = setTimeout(()=>t.classList.remove('show'), 1800);
+}
+
+/* ============ 路由 ============ */
+function parseHash(){
+  const h = location.hash.replace(/^#\//,'') || 'home';
+  const parts = h.split('/');
+  return { name: parts[0] || 'home', param: parts[1] };
+}
+function navigate(){
+  const { name, param } = parseHash();
+  $$('.view').forEach(v=>v.classList.remove('active'));
+  const map = { home:'#view-home', posts:'#view-posts', categories:'#view-categories',
+                archive:'#view-archive', works:'#view-works', about:'#view-about', post:'#view-detail', profile:'#view-profile', qa:'#view-qa' };
+  const sel = map[name] || '#view-home';
+  $(sel).classList.add('active');
+  // 导航高亮
+  $$('#navLinks a, .drawer a').forEach(a=>{
+    a.classList.toggle('active', a.dataset.route === name || (name==='post' && a.dataset.route==='posts'));
+  });
+  // 渲染对应内容
+  if(name==='home') renderHome();
+  else if(name==='posts') renderPosts();
+  else if(name==='categories') renderCategories();
+  else if(name==='archive') renderArchive();
+  else if(name==='post') renderDetail(parseInt(param,10));
+  else if(name==='qa') renderQA();
+  else if(name==='profile'){ renderProfile(); const us=$('#userStats'); if(us) us.innerHTML=renderUserStats(); }
+  window.scrollTo({top:0, behavior:'instant'});
+  closeDrawer();
+}
+
+/* ============ 渲染：首页 ============ */
+function renderHome(){
+  $('#statPosts').textContent = POSTS.length;
+  const cats = new Set(POSTS.map(p=>p.cat));
+  $('#statCats').textContent = cats.size;
+  const featured = POSTS.find(p=>p.featured) || POSTS[0];
+  const rest = POSTS.filter(p=>p.id!==featured.id);
+  let html = renderCarousel();
+  html += renderDailyTip();
+  html += `
+    <article class="feature" data-id="${featured.id}">
+      <div class="feature-tag">精选 · FEATURED</div>
+      <h2>${featured.title}</h2>
+      <p class="feature-excerpt">${featured.excerpt}</p>
+      <div class="article-meta">
+        <span class="author">前端札记</span><span>·</span>
+        <span>${featured.date}</span><span>·</span>
+        <span>${featured.cat}</span><span>·</span>
+        <span>${featured.readMin} 分钟阅读</span>
+      </div>
+    </article>
+    <div class="feed-divider"><span>最新文章</span></div>`;
+  rest.slice(0,6).forEach(p=>{
+    html += `<article class="post" data-id="${p.id}">
+      <div>
+        <h3>${p.title}</h3>
+        <p class="post-excerpt">${p.excerpt}</p>
+        <div class="article-meta">
+          <span>${p.date}</span><span>·</span><span>${p.cat}</span><span>·</span><span>${p.readMin} 分钟</span>
+        </div>
+      </div>
+      <div class="post-side">${p.id===2?'<span class="read-badge">New</span>':''}<span class="cat-badge">${p.cat}</span></div>
+      ${postActionsHtml(p.id)}
+    </article>`;
+  });
+  html += `<button class="load-more" id="homeMore">查看全部文章 →</button>`;
+  $('#homeFeed').innerHTML = html;
+  $('#homeMore').onclick = ()=> location.hash = '#/posts';
+  // 文章点击
+  $$('#homeFeed .post, #homeFeed .feature').forEach(el=>{
+    el.addEventListener('click', ()=> location.hash = '#/post/'+el.dataset.id);
+  });
+  // 侧边标签
+  const allTags = [...new Set(POSTS.flatMap(p=>p.tags))];
+  $('#sideTags').innerHTML = allTags.slice(0,12).map(t=>`<a data-tag="${esc(t)}">${t}</a>`).join('');
+  $$('#sideTags a').forEach(a=>a.addEventListener('click',()=>{ location.hash='#/posts'; window._searchTag=a.dataset.tag; $('#searchInput').value=a.dataset.tag; setTimeout(()=>renderPosts(),0); }));
+  // 热门
+  $('#hotList').innerHTML = POSTS.slice(0,4).map(p=>`<li data-id="${p.id}"><a>${p.title}</a></li>`).join('');
+  $$('#hotList li').forEach(li=>li.addEventListener('click',()=>location.hash='#/post/'+li.dataset.id));
+  // 入场动画 + 轮播
+  observePosts();
+  setTimeout(initCarousel, 50);
+  bindPostActions();
+}
+
+/* ============ 渲染：全部文章（带搜索/标签过滤） ============ */
+function renderPosts(){
+  const q = ($('#searchInput').value || '').trim().toLowerCase();
+  let list = POSTS.concat(getData('fb_myposts',[])).slice().sort((a,b)=>b.date.localeCompare(a.date));
+  if(q) list = list.filter(p => (p.title+p.excerpt+p.cat+p.tags.join('')).toLowerCase().includes(q));
+  $('#postsCount').textContent = `共 ${list.length} 篇${q?'（已按「'+q+'」过滤）':''}`;
+  if(!list.length){
+    $('#allPosts').innerHTML = `<div class="empty-state"><div class="icon">∅</div><p>没有找到匹配的文章</p></div>`;
+    return;
+  }
+  $('#allPosts').innerHTML = list.map(p=>`
+    <article class="post" data-id="${p.id}">
+      <div>
+        <h3>${p.title}</h3>
+        <p class="post-excerpt">${p.excerpt}</p>
+        <div class="article-meta">
+          <span>${p.date}</span><span>·</span><span>${p.cat}</span><span>·</span><span>${p.readMin} 分钟</span>
+        </div>
+      </div>
+      <div class="post-side"><span class="cat-badge">${p.cat}</span></div>
+    </article>`).join('');
+  $$('#allPosts .post').forEach(el=>el.addEventListener('click',()=>location.hash='#/post/'+el.dataset.id));
+  observePosts();
+}
+
+/* ============ 渲染：分类 ============ */
+function renderCategories(){
+  const map = {};
+  POSTS.forEach(p=>{ map[p.cat]=(map[p.cat]||0)+1; });
+  $('#catGrid').innerHTML = Object.entries(map).map(([cat,num])=>
+    `<div class="cat-card" data-cat="${esc(cat)}"><div class="name">${cat}</div><div class="num">${num} 篇文章</div></div>`
+  ).join('');
+  $$('#catGrid .cat-card').forEach(c=>c.addEventListener('click',()=>{
+    $('#searchInput').value = c.dataset.cat;
+    location.hash = '#/posts';
+    setTimeout(renderPosts,0);
+  }));
+}
+
+/* ============ 渲染：归档 ============ */
+function renderArchive(){
+  const byYear = {};
+  POSTS.forEach(p=>{
+    const y = p.date.slice(0,4);
+    (byYear[y]=byYear[y]||[]).push(p);
+  });
+  $('#archiveList').innerHTML = Object.entries(byYear).sort((a,b)=>b[0]-a[0]).map(([year,list])=>
+    `<div class="archive-group">
+      <div class="archive-year">${year}<span class="count">${list.length} 篇</span></div>
+      ${list.sort((a,b)=>b.date.localeCompare(a.date)).map(p=>
+        `<div class="archive-item" data-id="${p.id}"><span class="date">${p.date.slice(5)}</span><span class="title">${p.title}</span></div>`
+      ).join('')}
+    </div>`
+  ).join('');
+  $$('#archiveList .archive-item').forEach(el=>el.addEventListener('click',()=>location.hash='#/post/'+el.dataset.id));
+}
+
+/* ============ 渲染：详情 ============ */
+function renderDetail(id){
+  const p = POSTS.find(x=>x.id===id);
+  const box = $('#detailContent');
+  if(!p){ box.innerHTML = `<p style="color:var(--ink-faint)">文章不存在</p>`; return; }
+  document.title = p.title + ' · 前端札记';
+  box.innerHTML = `
+    <button class="back-btn" onclick="history.back()">← 返回</button>
+    <header class="detail-header">
+      <span class="cat">${p.cat}</span>
+      <h1>${p.title}</h1>
+      <div class="meta">
+        <span>前端札记</span><span>·</span><span>${p.date}</span><span>·</span><span>${p.readMin} 分钟阅读</span>
+      </div>
+    </header>
+    <div class="detail-body">${p.content}</div>
+    <div class="detail-tags">${p.tags.map(t=>`<span class="read-badge"># ${t}</span>`).join('')}</div>`;
+}
+
+/* ============ 入场动画 ============ */
+let io;
+function observePosts(){
+  if(!io){
+    io = new IntersectionObserver(entries=>{
+      entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
+    },{threshold:.08});
+  }
+  $$('.post:not(.visible)').forEach(el=>io.observe(el));
+}
+
+/* ============ 打字机 ============ */
+const TYPE_WORDS = ['能被人读懂的笔记。','踩过的坑。','前端的复利。'];
+let typeIdx = 0, charIdx = 0, deleting = false;
+function typeLoop(){
+  var el = document.getElementById('typeTarget');
+  if(!el) return;
+  var word = TYPE_WORDS[typeIdx];
+  if(!deleting){
+    charIdx++;
+    el.textContent = word.slice(0, charIdx);
+    if(charIdx >= word.length){
+      deleting = true;
+      setTimeout(typeLoop, 2000);
+    } else {
+      setTimeout(typeLoop, 200);
+    }
+  } else {
+    charIdx--;
+    el.textContent = word.slice(0, charIdx);
+    if(charIdx <= 0){
+      deleting = false;
+      typeIdx = (typeIdx + 1) % TYPE_WORDS.length;
+    }
+    setTimeout(typeLoop, 80);
+  }
+}
+
+/* ============ 交互绑定 ============ */
+// 主题
+const savedTheme = localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+document.documentElement.setAttribute('data-theme', savedTheme);
+$('#themeToggle').addEventListener('click',()=>{
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',next);
+  localStorage.setItem('theme',next);
+});
+
+// 搜索
+let searchTimer;
+$('#searchInput').addEventListener('input',()=>{
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(()=>{
+    if(parseHash().name!=='posts') location.hash = '#/posts';
+    else renderPosts();
+  },200);
+});
+
+// 写文章
+$('#writeBtn').addEventListener('click',()=>{ if(!getCurrent()){ openAuth('login'); toast('请先登录'); } else toast('演示站：正式环境这里会进入 Markdown 编辑器'); });
+
+// 社交
+$$('[data-social]').forEach(a=>a.addEventListener('click',()=>toast('即将跳转到 '+a.dataset.social)));
+
+// 滚动：进度条 + 返回顶部
+window.addEventListener('scroll',()=>{
+  const h = document.documentElement;
+  const pct = h.scrollTop / (h.scrollHeight - h.clientHeight) * 100;
+  $('#scrollProgress').style.width = pct + '%';
+  $('#backTop').classList.toggle('show', h.scrollTop > 400);
+},{passive:true});
+$('#backTop').addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+
+// 抽屉
+function closeDrawer(){ $('#drawer').classList.remove('show'); $('#drawerMask').classList.remove('show'); }
+$('#burgerBtn').addEventListener('click',()=>{ $('#drawer').classList.add('show'); $('#drawerMask').classList.add('show'); });
+$('#drawerMask').addEventListener('click', closeDrawer);
+
+// 路由
+window.addEventListener('hashchange', navigate);
+
+/* ============ 用户系统（本地模拟） ============ */
+const USERS_KEY='fb_users', CURRENT_KEY='fb_current';
+function getUsers(){ try{return JSON.parse(localStorage.getItem(USERS_KEY)||'[]')}catch(e){return[]} }
+function saveUsers(u){ localStorage.setItem(USERS_KEY,JSON.stringify(u)) }
+function getCurrent(){ try{return JSON.parse(localStorage.getItem(CURRENT_KEY)||'null')}catch(e){return null} }
+function setCurrent(u){ localStorage.setItem(CURRENT_KEY, u?JSON.stringify(u):'null') }
+
+let authMode='login';
+function openAuth(mode){
+  authMode=mode||'login';
+  $('#authModal').classList.add('show');
+  $('#modalTitle').textContent = authMode==='login'?'欢迎回来':'创建账号';
+  $('#modalSub').textContent = authMode==='login'?'登录后同步你的阅读偏好':'注册后即可记录阅读历史';
+  $('#groupName').style.display = authMode==='reg'?'block':'none';
+  $('#groupConfirm').style.display = authMode==='reg'?'block':'none';
+  $('#submitBtn').textContent = authMode==='login'?'登录':'注册';
+  $('#modalSwitch').innerHTML = authMode==='login'?'还没有账号？<a id="switchToReg">注册新账号</a>':'已有账号？<a id="switchToLogin">去登录</a>';
+  clearErrors();
+}
+function closeAuth(){ $('#authModal').classList.remove('show') }
+function clearErrors(){
+  ['errName','errEmail','errPassword','errConfirm'].forEach(id=>{ $('#'+id).textContent=''; $('#'+id).classList.remove('error') });
+  ['inputName','inputEmail','inputPassword','inputConfirm'].forEach(id=>$('#'+id).classList.remove('error'));
+}
+function setErr(id,msg){ $('#err'+id[0].toUpperCase()+id.slice(1)).textContent=msg; $('#input'+id[0].toUpperCase()+id.slice(1)).classList.add('error') }
+
+function validateAuth(){
+  let ok=true;
+  const email=$('#inputEmail').value.trim();
+  const pwd=$('#inputPassword').value;
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ setErr('Email','邮箱格式不对'); ok=false }
+  if(pwd.length<6){ setErr('Password','密码至少 6 位'); ok=false }
+  if(authMode==='reg'){
+    const name=$('#inputName').value.trim();
+    if(name.length<2){ setErr('Name','用户名至少 2 个字符'); ok=false }
+    if($('#inputConfirm').value!==pwd){ setErr('Confirm','两次密码不一致'); ok=false }
+    if(getUsers().some(u=>u.email===email)){ setErr('Email','这个邮箱已注册'); ok=false }
+  }
+  return ok;
+}
+
+$('#authForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  if(!validateAuth()) return;
+  const email=$('#inputEmail').value.trim();
+  const pwd=$('#inputPassword').value;
+  if(authMode==='reg'){
+    const name=$('#inputName').value.trim();
+    const users=getUsers();
+    users.push({name,email,pwd});
+    saveUsers(users);
+    setCurrent({name,email});
+    toast('注册成功，欢迎 '+name);
+  }else{
+    const u=getUsers().find(x=>x.email===email && x.pwd===pwd);
+    if(!u){ setErr('Password','邮箱或密码错误'); return }
+    u.createdAt=u.createdAt||Date.now(); setCurrent(u);
+    toast('欢迎回来，'+u.name);
+  }
+  closeAuth();
+  renderLoginArea();
+});
+$('#modalClose').addEventListener('click',closeAuth);
+$('#authModal').addEventListener('click',function(e){ if(e.target===this) closeAuth() });
+document.addEventListener('click',function(e){
+  if(e.target && e.target.id==='switchToReg') openAuth('reg');
+  if(e.target && e.target.id==='switchToLogin') openAuth('login');
+});
+
+function renderLoginArea(){
+  const cur=getCurrent();
+  const box=$('#loginArea');
+  if(cur){
+    box.innerHTML='<div style="display:flex;align-items:center;gap:6px"><div class="user-chip" id="userChip"><div class="avatar">'+cur.name[0].toUpperCase()+'</div><span style="font-size:14px">'+cur.name+'</span></div><button id="logoutBtn" title="退出登录" style="background:none;border:none;cursor:pointer;color:var(--ink-faint);font-size:16px;padding:4px 6px;border-radius:6px">⏻</button></div>';
+    $('#userChip').addEventListener('click',function(){ location.hash='#/profile'; });
+    $('#logoutBtn').addEventListener('click',function(e){ e.stopPropagation(); if(confirm('要退出登录吗？')){ setCurrent(null); renderLoginArea(); toast('已退出登录') } });
+  }else{
+    box.innerHTML='<button class="login-btn" id="openLogin">登录</button>';
+    $('#openLogin').addEventListener('click',()=>openAuth('login'));
+  }
+}
+
+/* ============ 设置系统 ============ */
+const SETTINGS_KEY='fb_settings';
+const ACCENTS=[
+  {id:'ocean',color:'#16324F'},{id:'forest',color:'#1F4D3A'},
+  {id:'violet',color:'#3D2B5C'},{id:'crimson',color:'#5C1F2B'},
+  {id:'teal',color:'#0F4C5C'},{id:'slate',color:'#2D3748'},
+  {id:'sakura',color:'#C2185B'},{id:'mint',color:'#00695C'},
+  {id:'sky',color:'#1565C0'},{id:'lavender',color:'#5E35B1'},
+  {id:'peach',color:'#D84315'},{id:'citrus',color:'#2E7D32'},
+  {id:'rose',color:'#B0607A'},{id:'indigo',color:'#5C6FA8'},
+  {id:'plum',color:'#8A5C8A'},{id:'olive',color:'#7A8B4F'},
+  {id:'coral',color:'#C07A5E'},{id:'butter',color:'#A89040'},
+  {id:'sage',color:'#6B8B7A'},{id:'wine',color:'#8B4A5A'},
+  {id:'azure',color:'#4A7BA8'},{id:'sand',color:'#9A7B5A'},
+  {id:'moss',color:'#5A7A5A'},{id:'lilac',color:'#8A6BA8'},
+  {id:'apricot',color:'#C08060'},{id:'slateblue',color:'#5A6B8A'},
+  {id:'seafoam',color:'#4A8B7B'}
+];
+function getSettings(){
+  try{ return Object.assign({accent:'ocean',font:'serif',size:'medium',theme:document.documentElement.getAttribute('data-theme')||'light'}, JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}')) }
+  catch(e){ return {accent:'ocean',font:'serif',size:'medium',theme:'light'} }
+}
+function applySettings(s){
+  document.documentElement.setAttribute('data-accent',s.accent);
+  document.documentElement.setAttribute('data-font',s.font);
+  document.body.setAttribute('data-size',s.size);
+  document.documentElement.setAttribute('data-theme',s.theme);
+  // 高亮选项
+  $$('#colorDots .color-dot').forEach(d=>d.classList.toggle('active',d.dataset.accent===s.accent));
+  $$('#fontOptions .option-chip').forEach(c=>c.classList.toggle('active',c.dataset.font===s.font));
+  $$('#sizeOptions .option-chip').forEach(c=>c.classList.toggle('active',c.dataset.size===s.size));
+  $$('#themeOptions .option-chip').forEach(c=>c.classList.toggle('active',c.dataset.theme===s.theme));
+}
+function saveSettings(){ localStorage.setItem(SETTINGS_KEY,JSON.stringify(getSettings())) }
+
+// 渲染色点
+$('#colorDots').innerHTML = ACCENTS.map(a=>'<div class="color-dot" data-accent="'+a.id+'" style="background:'+a.color+'" title="'+a.id+'"></div>').join('');
+$('#colorDots').addEventListener('click',function(e){
+  const d=e.target.closest('.color-dot'); if(!d) return;
+  const s=getSettings(); s.accent=d.dataset.accent; applySettings(s); saveSettings();
+});
+$('#fontOptions').addEventListener('click',function(e){
+  const c=e.target.closest('.option-chip'); if(!c) return;
+  const s=getSettings(); s.font=c.dataset.font; applySettings(s); saveSettings();
+});
+// size options removed, using slider
+$('#themeOptions').addEventListener('click',function(e){
+  const c=e.target.closest('.option-chip'); if(!c) return;
+  const s=getSettings(); s.theme=c.dataset.theme; applySettings(s); saveSettings();
+});
+
+// 设置抽屉开关
+function openSettings(){ $('#settingsPanel').classList.add('show'); $('#settingsMask').classList.add('show') }
+function closeSettings(){ $('#settingsPanel').classList.remove('show'); $('#settingsMask').classList.remove('show') }
+$('#settingsToggle').addEventListener('click',openSettings);
+$('#settingsMask').addEventListener('click',closeSettings);
+
+/* ============ 轮播 ============ */
+let carouselIdx=0, carouselTimer=null;
+function renderCarousel(){
+  const slides = POSTS.slice(0,3);
+  const track = slides.map((p,i)=>'<div class="carousel-slide" data-id="'+p.id+'"><div class="ctag">精选 0'+(i+1)+'</div><h3>'+p.title+'</h3><p>'+p.excerpt.slice(0,60)+'…</p></div>').join('');
+  const dots = slides.map((_,i)=>'<span data-i="'+i+'"></span>').join('');
+  return '<div class="carousel"><div class="carousel-track" id="carouselTrack">'+track+'</div><div class="carousel-dots">'+dots+'</div></div>';
+}
+function startCarousel(){
+  stopCarousel();
+  carouselTimer=setInterval(()=>{
+    carouselIdx=(carouselIdx+1)%3;
+    const t=$('#carouselTrack'); if(t) t.style.transform='translateX(-'+carouselIdx*100+'%)';
+    $$('.carousel-dots span').forEach((d,i)=>d.classList.toggle('active',i===carouselIdx));
+  },5000);
+}
+function stopCarousel(){ if(carouselTimer){clearInterval(carouselTimer);carouselTimer=null} }
+function initCarousel(){
+  const t=$('#carouselTrack'); if(!t) return;
+  carouselIdx=0; t.style.transform='translateX(0)';
+  $$('.carousel-dots span').forEach((d,i)=>d.classList.toggle('active',i===0));
+  $$('.carousel-slide').forEach(s=>s.addEventListener('click',()=>location.hash='#/post/'+s.dataset.id));
+  $$('.carousel-dots span').forEach(d=>d.addEventListener('click',()=>{
+    carouselIdx=parseInt(d.dataset.i,10);
+    t.style.transform='translateX(-'+carouselIdx*100+'%)';
+    $$('.carousel-dots span').forEach((x,i)=>x.classList.toggle('active',i===carouselIdx));
+    startCarousel();
+  }));
+  startCarousel();
+}
+
+
+/* ============ 浏览历史 ============ */
+const HISTORY_KEY='fb_history';
+function addHistory(postId){
+  const post=POSTS.find(p=>p.id===postId); if(!post) return;
+  let h=[]; try{h=JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]')}catch(e){}
+  h=h.filter(x=>x.id!==postId);
+  h.unshift({id:postId,title:post.title,date:post.date,ts:Date.now()});
+  if(h.length>50) h=h.slice(0,50);
+  localStorage.setItem(HISTORY_KEY,JSON.stringify(h));
+}
+function getHistory(){ try{return JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]')}catch(e){return[]} }
+
+// 打开详情时记录
+const _origDetail=renderDetail;
+renderDetail=function(id){ _origDetail(id); addHistory(id); };
+
+/* ============ 密码强度 ============ */
+function pwdStrength(pwd){
+  let s=0;
+  if(pwd.length>=8) s++;
+  if(/[A-Z]/.test(pwd)&&/[a-z]/.test(pwd)) s++;
+  if(/\d/.test(pwd)) s++;
+  if(/[^A-Za-z0-9]/.test(pwd)) s++;
+  return s; // 0-4
+}
+function showPwdStrength(pwd){
+  const box=document.getElementById('pwdStrength');
+  if(!box) return;
+  const s=pwdStrength(pwd);
+  box.className='pwd-strength';
+  if(pwd.length===0){box.className='pwd-strength';return}
+  if(s<=1) box.classList.add('weak');
+  else if(s<=2) box.classList.add('mid');
+  else box.classList.add('strong');
+}
+
+/* ============ 忘记密码流程 ============ */
+let fgStep=1, fgCodeSent='';
+function openForgot(){ $('#forgotModal').classList.add('show'); fgStep=1; fgShowStep(); }
+function fgShowStep(){
+  $('#forgotStep1').style.display = fgStep===1?'block':'none';
+  $('#forgotStep2').style.display = fgStep===2?'block':'none';
+  $('#fgCodeGroup').style.display = fgStep===2?'block':'none';
+  $('#fgPwdGroup').style.display = fgStep===2?'block':'none';
+  $('#fgSubmit').textContent = fgStep===1?'发送验证码':'重置密码';
+}
+$('#forgotLink').addEventListener('click',function(e){e.preventDefault();closeAuth();openForgot();});
+document.querySelectorAll('[data-close]').forEach(el=>el.addEventListener('click',function(){$('#'+el.dataset.close).classList.remove('show')}));
+$('#forgotForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  if(fgStep===1){
+    const email=$('#fgEmail').value.trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ $('#fgEmailErr').textContent='邮箱格式不对'; return }
+    const users=getUsers();
+    if(!users.some(u=>u.email===email)){ $('#fgEmailErr').textContent='这个邮箱未注册'; return }
+    fgCodeSent=String(Math.floor(100000+Math.random()*900000));
+    toast('验证码已发送（演示：'+fgCodeSent+'）');
+    fgStep=2; fgShowStep();
+  }else{
+    if($('#fgCode').value!==fgCodeSent){ $('#fgCodeErr').textContent='验证码错误'; return }
+    const pwd=$('#fgPwd').value;
+    if(pwd.length<8){ $('#fgPwdErr').textContent='新密码至少 8 位'; return }
+    const email=$('#fgEmail').value.trim();
+    const users=getUsers().map(u=>u.email===email?Object.assign(u,{pwd}):u);
+    saveUsers(users);
+    toast('密码已重置，请登录');
+    $('#forgotModal').classList.remove('show');
+    openAuth('login');
+  }
+});
+
+/* ============ 第三方登录（占位） ============ */
+document.querySelectorAll('.oauth-btn').forEach(b=>b.addEventListener('click',function(){
+  toast(b.dataset.oauth+'登录需要接入后端 OAuth，演示环境请用邮箱注册');
+}));
+
+/* ============ 反馈 ============ */
+if($('#writeBtn')) $('#writeBtn').onclick=openWrite;
+$('#feedbackBtn').addEventListener('click',()=>$('#feedbackModal').classList.add('show'));
+// 反馈上传
+$('#fbUpload').addEventListener('click',()=>$('#fbFile').click());
+let fbFiles=[];
+$('#fbFile').addEventListener('change',function(e){
+  const f=e.target.files[0]; if(!f) return;
+  if(f.size>5*1024*1024){ toast('文件不能超过 5MB'); return }
+  const r=new FileReader();
+  r.onload=function(ev){
+    fbFiles.push({name:f.name,type:f.type,data:ev.target.result});
+    renderFbPreview();
+    toast('已添加附件：'+f.name);
+  };
+  r.readAsDataURL(f);
+});
+function renderFbPreview(){
+  $('#fbPreview').innerHTML=fbFiles.map((f,i)=>{
+    if(f.type.startsWith('image/')) return '<div style="position:relative"><img src="'+f.data+'" style="width:80px;height:80px;object-fit:cover;border-radius:8px"><span data-rm="'+i+'" style="position:absolute;top:-6px;right:-6px;background:#e74c3c;color:#fff;width:18px;height:18px;border-radius:50%;font-size:11px;display:grid;place-items:center;cursor:pointer">x</span></div>';
+    return '<div style="padding:8px 12px;background:var(--bg-sub);border-radius:8px;font-size:12px">🎬 '+f.name+' <span data-rm="'+i+'" style="color:#e74c3c;cursor:pointer;margin-left:6px">x</span></div>';
+  }).join('');
+  $$('#fbPreview [data-rm]').forEach(el=>el.addEventListener('click',()=>{ fbFiles.splice(parseInt(el.dataset.rm,10),1); renderFbPreview(); }));
+}
+$('#feedbackForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  const c=$('#fbContent').value.trim();
+  if(c.length<5){ $('#fbContentErr').textContent='请至少写 5 个字'; return }
+  let fb=[]; try{fb=JSON.parse(localStorage.getItem('fb_feedback')||'[]')}catch(e){}
+  fb.push({type:$('#fbType').value,content:c,contact:$('#fbContact').value,files:fbFiles.length,ts:Date.now()});
+  localStorage.setItem('fb_feedback',JSON.stringify(fb));
+  toast('感谢反馈！我们会认真看的');
+  $('#feedbackModal').classList.remove('show');
+  this.reset(); fbFiles=[]; $('#fbPreview').innerHTML='';
+});
+
+/* ============ 字号滑块 ============ */
+const sizeSlider=$('#sizeSlider');
+sizeSlider.addEventListener('input',function(){
+  document.body.style.fontSize=this.value+'px';
+  $('#sizeVal').textContent=this.value+'px';
+});
+
+/* ============ 个人中心 ============ */
+function renderProfile(){
+  const cur=getCurrent();
+  const box=$('#profileContent');
+  if(!cur){
+    box.innerHTML='<div class="empty-state" style="padding:60px 20px"><p>请先登录后查看个人中心</p><button class="nav-cta" style="margin-top:16px" onclick="openAuth(\'login\')">去登录</button></div>';
+    return;
+  }
+  const history=getHistory();
+  const hisHtml = history.length ? history.map(h=>
+    '<div class="history-item" data-id="'+h.id+'"><span class="h-title">'+h.title+'</span><span class="h-time">'+new Date(h.ts).toLocaleDateString()+'</span></div>'
+  ).join('') : '<p style="color:var(--ink-faint);font-size:14px">还没有浏览记录，去读几篇文章吧</p>';
+
+  // 近 7 天阅读统计
+  const days=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date(Date.now()-i*86400000);
+    const key=d.toDateString();
+    const cnt=history.filter(h=>new Date(h.ts).toDateString()===key).length;
+    days.push({label:(d.getMonth()+1)+'/'+d.getDate(),cnt:cnt});
+  }
+  const maxCnt=Math.max(...days.map(d=>d.cnt),1);
+  const chartHtml='<div class="stat-chart">'+days.map(d=>
+    '<div class="stat-bar"><div class="bar" style="height:'+(d.cnt/maxCnt*70)+'px"></div><span class="day">'+d.label+'</span></div>'
+  ).join('')+'</div>';
+
+  box.innerHTML='<div class="profile-grid">'+
+    '<div><div class="avatar-upload" id="avatarUpload"><div class="hint">点击上传头像</div></div>'+
+    '<p style="font-size:12px;color:var(--ink-faint);margin-top:10px;text-align:center">支持 JPG/PNG</p></div>'+
+    '<div>'+
+    '<div class="form-row"><label>昵称</label><input type="text" id="pfName" value="'+esc(cur.name)+'"></div>'+
+    '<div class="form-row"><label>性别</label><select id="pfGender"><option value="保密">保密</option><option value="男">男</option><option value="女">女</option></select></div>'+
+    '<div class="form-row"><label>年龄</label><input type="number" id="pfAge" min="1" max="120" value="'+(cur.age||'')+'"></div>'+
+    '<div class="form-row"><label>所在地区</label><select id="pfRegion"><option value="">请选择</option><option>北京</option><option>上海</option><option>广州</option><option>深圳</option><option>杭州</option><option>成都</option><option>重庆</option><option>武汉</option><option>西安</option><option>其他</option></select></div>'+
+    '<div class="form-row"><label>兴趣标签（多选）</label><div id="pfTags">'+
+    ['前端','后端','CSS','React','TypeScript','算法','数据库','产品设计','职业发展','读书'].map(t=>'<span class="tag-checkbox" data-tag="'+t+'">'+t+'</span>').join('')+
+    '</div></div>'+
+    '<button class="save-btn" id="pfSave">保存资料</button>'+
+    '</div></div>'+
+    '<div style="margin-top:40px"><h3 style="font-family:var(--serif);color:var(--navy);margin-bottom:12px">近 7 天阅读</h3>'+chartHtml+'</div>'+
+    '<div style="margin-top:40px"><h3 style="font-family:var(--serif);color:var(--navy);margin-bottom:12px">浏览历史</h3>'+hisHtml+'</div>';
+
+  // 初始化已选值
+  if(cur.gender) $('#pfGender').value=cur.gender;
+  if(cur.region) $('#pfRegion').value=cur.region;
+  (cur.tags||[]).forEach(t=>{const el=document.querySelector('#pfTags [data-tag="'+t+'"]'); if(el) el.classList.add('checked')});
+
+  // 兴趣标签多选
+  $$('#pfTags .tag-checkbox').forEach(c=>c.addEventListener('click',()=>c.classList.toggle('checked')));
+
+  // 头像上传
+  $('#avatarUpload').addEventListener('click',function(){
+    const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*';
+    inp.onchange=function(e){
+      const f=e.target.files[0]; if(!f) return;
+      const r=new FileReader();
+      r.onload=function(ev){
+        cur.avatar=ev.target.result;
+        setCurrent(cur);
+        $('#avatarUpload').innerHTML='<img src="'+ev.target.result+'">';
+        renderLoginArea();
+        toast('头像已更新');
+      };
+      r.readAsDataURL(f);
+    };
+    inp.click();
+  });
+  if(cur.avatar) $('#avatarUpload').innerHTML='<img src="'+cur.avatar+'">';
+
+  // 保存
+  $('#pfSave').addEventListener('click',function(){
+    cur.name=$('#pfName').value.trim()||cur.name;
+    cur.gender=$('#pfGender').value;
+    cur.age=$('#pfAge').value;
+    cur.region=$('#pfRegion').value;
+    cur.tags=$$('#pfTags .tag-checkbox.checked').map(c=>c.dataset.tag);
+    // 更新 users 数组里的这条
+    const users=getUsers().map(u=>u.email===cur.email?cur:u);
+    saveUsers(users); setCurrent(cur);
+    renderLoginArea();
+    toast('资料已保存');
+  });
+
+  // 历史项点击
+  $$('#profileContent .history-item').forEach(el=>el.addEventListener('click',()=>location.hash='#/post/'+el.dataset.id));
+}
+
+// 登录后初始化安全信息
+function refreshSecurity(){
+  const cur=getCurrent();
+  $('#lastLogin').textContent = cur? new Date().toLocaleString() : '--';
+  $('#pwdLevel').textContent = cur? (pwdStrength(cur.pwd)>=3?'强':pwdStrength(cur.pwd)>=2?'中':'弱') : '未设置';
+}
+
+// 替换 renderLoginArea 调用，同时刷新安全
+const _origLogin=renderLoginArea;
+renderLoginArea=function(){ _origLogin(); refreshSecurity(); };
+
+// 双重验证开关
+$('#twoFactor').addEventListener('click',function(){ this.classList.toggle('on'); toast(this.classList.contains('on')?'双重验证已开启':'双重验证已关闭'); });
+
+try{ renderLoginArea(); }catch(e){ console.error('loginArea',e); }
+try{ applySettings(getSettings()); }catch(e){ console.error('settings',e); }
+try{ navigate(); }catch(e){ console.error('navigate',e); }
+window.addEventListener('load', function(){ setTimeout(typeLoop, 200); });
+
+// 问答
+function renderQA(){
+  const list=getData('fb_qa',[
+    {q:'CSS Grid 和 Flexbox 到底怎么选？',a:'一维布局用 Flexbox，二维布局用 Grid。导航栏、居中对齐、行内排列选 Flexbox；整篇文章栅格、卡片矩阵选 Grid。两个不冲突，经常一起用。',ts:'2026-10-18',ans:3},
+    {q:'Vite 为什么比 Webpack 快？',a:'开发环境用原生 ESM，不需要打包，浏览器请求哪个模块就编译哪个。Webpack 是先把整个 bundle 打出来再启动。生产环境 Vite 用 Rollup 打包， treeshaking 更好。',ts:'2026-10-19',ans:1},
+    {q:'React 18 的并发特性有什么实际用？',a:'startTransition 把非紧急更新标记为可中断，输入框不卡顿；useDeferredValue 让搜索结果延迟渲染不阻塞输入。',ts:'2026-10-20',ans:2}
+  ]);
+  $('#qaList').innerHTML=list.map((item,i)=>'<div class="qa-item" data-qi="'+i+'"><h4>'+esc(item.q)+'</h4><div class="qa-meta">'+item.ts+' · '+item.ans+' 个回答</div><div class="qa-detail" style="display:none;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);font-size:13px;color:var(--ink-soft)">'+(item.a||'还没有回答，抢沙发~')+'</div></div>').join('');
+  $$('#qaList .qa-item').forEach(el=>el.addEventListener('click',function(){
+    const d=this.querySelector('.qa-detail');
+    d.style.display=d.style.display==='none'?'block':'none';
+  }));
+}
+$('#qaSubmit')&&($('#qaSubmit').onclick=()=>{
+  const v=$('#qaInput').value.trim(); if(!v){toast('先写个问题');return}
+  const list=getData('fb_qa',[]); list.unshift({q:v,a:'',ts:new Date().toISOString().slice(0,10),ans:0});
+  setData('fb_qa',list); $('#qaInput').value=''; renderQA(); toast('问题已发布');
+});
+
+// 注册天数 & 统计图表
+function renderUserStats(){
+  const u=getCurrent();
+  if(!u) return '<div class="stat-grid"><div class="stat-cell"><div class="num">-</div><div class="lbl">加入天数</div></div><div class="stat-cell"><div class="num">0</div><div class="lbl">我的文章</div></div><div class="stat-cell"><div class="num">'+getFavs().length+'</div><div class="lbl">收藏</div></div><div class="stat-cell"><div class="num">'+Object.values(getLikes()).reduce((a,b)=>a+b,0)+'</div><div class="lbl">获赞</div></div></div>';
+  const days=Math.max(1,Math.floor((Date.now()-new Date(u.createdAt||Date.now()))/86400000));
+  const myPosts=getData('fb_myposts',[]);
+  const favs=getFavs();
+  const likes=Object.values(getLikes()).reduce((a,b)=>a+b,0);
+  // 分类分布
+  const catMap={}; POSTS.forEach(p=>catMap[p.cat]=(catMap[p.cat]||0)+1);
+  const maxCat=Math.max(...Object.values(catMap));
+  let bars='';
+  Object.entries(catMap).forEach(([c,n])=>{
+    bars+='<div class="bar-row"><span class="bar-label">'+c+'</span><div class="bar-track"><div class="bar-fill" style="width:'+(n/maxCat*100)+'%"></div></div><span>'+n+'</span></div>';
+  });
+  return '<div class="stat-grid">'+
+    '<div class="stat-cell"><div class="num">'+days+'</div><div class="lbl">加入天数</div></div>'+
+    '<div class="stat-cell"><div class="num">'+myPosts.length+'</div><div class="lbl">我的文章</div></div>'+
+    '<div class="stat-cell"><div class="num">'+favs.length+'</div><div class="lbl">收藏</div></div>'+
+    '<div class="stat-cell"><div class="num">'+likes+'</div><div class="lbl">获赞</div></div>'+
+  '</div><div class="chart-box"><h4>文章分类分布</h4>'+bars+'</div>';
+}
+
+// 初始化问答
+if(location.hash.startsWith('#/qa')) renderQA();
+
+
+// 写文章
+function openWrite(){
+  if(!getCurrent()){ toast('请先登录'); openAuth('login'); return; }
+  $('#writeModal').classList.add('show');
+}
+$('#writeForm')&&($('#writeForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  const t=$('#wTitle').value.trim();
+  const c=$('#wContent').value.trim();
+  if(t.length<3){ $('#wTitleErr').textContent='标题至少 3 个字'; return }
+  if(c.length<10){ $('#wContentErr').textContent='正文至少 10 个字'; return }
+  const myPosts=getData('fb_myposts',[]);
+  const toc=(c.match(/<h2[^>]*>(.*?)<\/h2>/gi)||[]).map(s=>s.replace(/<[^>]+>/g,'')); myPosts.unshift({id:Date.now(),title:t,cat:$('#wCat').value,excerpt:$('#wExcerpt').value.trim()||c.slice(0,80),tags:$('#wTags').value.split(',').map(s=>s.trim()).filter(Boolean),toc:toc,cover:wCoverData||null,content:c,date:new Date().toISOString().slice(0,10),readMin:Math.ceil(c.length/400),mine:true});
+  setData('fb_myposts',myPosts);
+  toast('文章已发布');
+  $('#writeModal').classList.remove('show');
+  this.reset(); wCoverData=null; $('#wCoverPreview').innerHTML='';
+  location.hash='#/posts';
+}));
+// 封面上传
+let wCoverData=null;
+$('#wCover')&&($('#wCover').addEventListener('click',()=>$('#wCoverFile').click()));
+$('#wCoverFile')&&($('#wCoverFile').addEventListener('change',function(e){
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=function(ev){ wCoverData=ev.target.result; $('#wCoverPreview').innerHTML='<img src="'+wCoverData+'" style="max-height:120px;border-radius:8px">'; };
+  r.readAsDataURL(f);
+}));
+
+</script>
+</body>
+</html>
