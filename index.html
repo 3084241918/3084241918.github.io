@@ -618,14 +618,21 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 
 <!-- AI 智能助手 -->
 <button id="aiChatBtn" title="AI 智能助手 · 小晴" style="position:fixed;right:24px;bottom:84px;border:none;background:var(--amber);color:#fff;font-size:14px;font-weight:700;cursor:pointer;box-shadow:var(--shadow-hover);z-index:95;display:flex;align-items:center;gap:7px;padding:12px 18px;border-radius:999px;letter-spacing:.5px"><span style="font-size:16px">✦</span>小晴</button>
-<div id="aiChatPanel" style="position:fixed;right:24px;bottom:142px;width:350px;max-width:calc(100vw - 48px);height:460px;max-height:70vh;background:var(--bg-elev);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-hover);z-index:250;display:none;flex-direction:column;overflow:hidden">
+<div id="aiChatPanel" style="position:fixed;right:24px;bottom:142px;width:var(--ai-w,380px);max-width:calc(100vw - 48px);height:var(--ai-h,520px);max-height:75vh;background:var(--bg-elev);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-hover);z-index:250;display:none;flex-direction:column;overflow:hidden">
   <div style="padding:12px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
-    <div><div style="font-family:var(--serif);font-weight:900;color:var(--navy);font-size:15px">智能助手 · 小晴</div><div style="font-size:11.5px;color:var(--ink-faint);margin-top:2px">AI 驱动，可以问我前端 / Python / 数据相关问题</div></div>
-    <span id="aiChatClose" style="cursor:pointer;color:var(--ink-faint);font-size:16px;padding:2px 4px;flex-shrink:0">✕</span>
+    <div><div style="font-family:var(--serif);font-weight:900;color:var(--navy);font-size:16px">智能助手 · 小晴</div><div style="font-size:12px;color:var(--ink-faint);margin-top:2px">AI 驱动，可以问我前端 / Python / 数据相关问题</div></div>
+    <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
+      <button id="aiFontDown" title="字体缩小" style="background:none;border:1px solid var(--line);color:var(--ink-faint);width:24px;height:24px;border-radius:6px;cursor:pointer;font-size:12px;line-height:1">A-</button>
+      <button id="aiFontUp" title="字体放大" style="background:none;border:1px solid var(--line);color:var(--ink-faint);width:24px;height:24px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:700;line-height:1">A+</button>
+      <button id="aiSizeCycle" title="聊天框大小" style="background:none;border:1px solid var(--line);color:var(--ink-faint);width:24px;height:24px;border-radius:6px;cursor:pointer;font-size:11px;line-height:1">↕</button>
+      <button id="aiClearHist" title="清空聊天" style="background:none;border:1px solid var(--line);color:var(--ink-faint);width:24px;height:24px;border-radius:6px;cursor:pointer;font-size:12px;line-height:1">🗑</button>
+      <span id="aiChatClose" style="cursor:pointer;color:var(--ink-faint);font-size:16px;padding:2px 4px">✕</span>
+    </div>
   </div>
-  <div id="aiMsgs" style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px"></div>
+  <div id="aiMsgs" style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;position:relative"></div>
+  <div id="aiScrollDown" style="position:absolute;bottom:72px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;box-shadow:var(--shadow-hover);display:none;align-items:center;justify-content:center;font-size:16px;z-index:1;opacity:.85">↓</div>
   <div style="display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line)">
-    <input id="aiInput" type="text" placeholder="问我点什么…" style="flex:1;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-size:13.5px;outline:none">
+    <input id="aiInput" type="text" placeholder="问我点什么…" style="flex:1;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-size:var(--ai-fs,14.5px);outline:none">
     <button id="aiSend" class="nav-cta" style="padding:9px 16px;font-size:13px;white-space:nowrap">发送</button>
   </div>
 </div>
@@ -2103,23 +2110,74 @@ window.addEventListener('load', function(){ setTimeout(typeLoop, 200); });
 
 /* ============ AI 智能助手（小晴） ============ */
 (function(){
-  var panel=$('#aiChatPanel'),msgs=$('#aiMsgs'),input=$('#aiInput'),history=[];
+  var panel=$('#aiChatPanel'),msgs=$('#aiMsgs'),input=$('#aiInput'),sdb=$('#aiScrollDown');
+  var HIS_KEY='fb_aiChat', FS_KEY='fb_aiFont', HS_KEY='fb_aiHeight', WS_KEY='fb_aiWidth';
+  var SIZES=[{w:340,h:380,label:'小'},{w:390,h:520,label:'中'},{w:460,h:660,label:'大'}];
+  var curSize=parseInt(localStorage.getItem(WS_KEY))||1;
+  var curFs=parseFloat(localStorage.getItem(FS_KEY))||14.5;
+  function applySettings(){
+    var s=SIZES[curSize]||SIZES[1];
+    panel.style.setProperty('--ai-w',s.w+'px');
+    panel.style.setProperty('--ai-h',s.h+'px');
+    panel.style.setProperty('--ai-fs',curFs+'px');
+    panel.style.setProperty('--ai-line',(curFs*1.65)+'px');
+    document.querySelectorAll('#aiMsgs > div').forEach(function(b){ b.style.fontSize=curFs+'px'; b.style.lineHeight=(curFs*1.65)+'px'; });
+  }
+  function loadHistory(){
+    var arr=[]; try{ arr=JSON.parse(localStorage.getItem(HIS_KEY)||'[]') }catch(e){}
+    msgs.innerHTML='';
+    arr.forEach(function(m){
+      var d=document.createElement('div');
+      d.style.cssText=(m.who==='me'
+        ?'align-self:flex-end;background:var(--navy);color:#fff;border-radius:12px 12px 2px 12px'
+        :'align-self:flex-start;background:var(--bg-sub);color:var(--ink);border-radius:12px 12px 12px 2px')
+        +';padding:9px 13px;max-width:85%;font-size:'+curFs+'px;line-height:'+(curFs*1.65)+'px;white-space:pre-wrap;word-break:break-word';
+      d.textContent=m.text; msgs.appendChild(d);
+    });
+    if(!arr.length){ addMsg('你好呀，我是小晴～这个博客的智能助手。可以问我前端、Python、数据处理的问题，也可以聊聊这个博客哦。','ai'); }
+    msgs.scrollTop=msgs.scrollHeight;
+  }
+  function saveHistory(){
+    var arr=[]; msgs.querySelectorAll(':scope > div').forEach(function(b,i){ arr.push({who:i%2===0?'ai':'me',text:b.textContent}) });
+    localStorage.setItem(HIS_KEY,JSON.stringify(arr.slice(-50)));
+  }
   function addMsg(text,who){
     var d=document.createElement('div');
     d.style.cssText=(who==='me'
       ?'align-self:flex-end;background:var(--navy);color:#fff;border-radius:12px 12px 2px 12px'
       :'align-self:flex-start;background:var(--bg-sub);color:var(--ink);border-radius:12px 12px 12px 2px')
-      +';padding:9px 13px;max-width:85%;font-size:13.5px;line-height:1.65;white-space:pre-wrap;word-break:break-word';
-    d.textContent=text; msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d;
+      +';padding:9px 13px;max-width:85%;font-size:'+curFs+'px;line-height:'+(curFs*1.65)+'px;white-space:pre-wrap;word-break:break-word';
+    d.textContent=text; msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; saveHistory(); return d;
   }
   $('#aiChatBtn').addEventListener('click',function(){
     var show=panel.style.display!=='flex';
     panel.style.display=show?'flex':'none';
-    if(show&&!msgs.children.length)addMsg('你好呀，我是小晴～这个博客的智能助手。可以问我前端、Python、数据处理的问题，也可以聊聊这个博客哦。','ai');
+    if(show){ applySettings(); if(!msgs.children.length)loadHistory(); else msgs.scrollTop=msgs.scrollHeight; }
     if(show)setTimeout(function(){input.focus()},100);
   });
   $('#aiChatClose').addEventListener('click',function(){panel.style.display='none'});
   document.addEventListener('keydown',function(e){ if(e.key==='Escape')panel.style.display='none' });
+  // 字体放大/缩小
+  $('#aiFontUp').addEventListener('click',function(){ curFs=Math.min(20,curFs+1); localStorage.setItem(FS_KEY,curFs); applySettings(); });
+  $('#aiFontDown').addEventListener('click',function(){ curFs=Math.max(11,curFs-1); localStorage.setItem(FS_KEY,curFs); applySettings(); });
+  // 聊天框大小循环
+  $('#aiSizeCycle').addEventListener('click',function(){ curSize=(curSize+1)%SIZES.length; localStorage.setItem(WS_KEY,curSize); applySettings(); });
+  // 清空聊天历史
+  $('#aiClearHist').addEventListener('click',function(){
+    if(!confirm('清空所有聊天记录？')) return;
+    localStorage.removeItem(HIS_KEY); msgs.innerHTML=''; history=[];
+    addMsg('已清空聊天记录～','ai');
+  });
+  // 滚动到底部按钮
+  msgs.addEventListener('scroll',function(){
+    var atBottom=msgs.scrollHeight-msgs.scrollTop-msgs.clientHeight<60;
+    sdb.style.display=atBottom?'none':'flex';
+  });
+  sdb.addEventListener('click',function(){ msgs.scrollTop=msgs.scrollHeight; });
+  // 初始化
+  applySettings();
+
+  // ============ localBrain + send 保持原样 ============
   function localBrain(q){
     var t=q.toLowerCase();
     function has(){ for(var i=0;i<arguments.length;i++){ if(q.indexOf(arguments[i])>=0||t.indexOf(arguments[i].toLowerCase())>=0)return true } return false }
@@ -2137,6 +2195,7 @@ window.addEventListener('load', function(){ setTimeout(typeLoop, 200); });
     if(has('字体','背景','主题','设置'))return '点顶部的小齿轮可以打开"个性化设置"：主题色、全站字体（8 种）、正文字号、页面背景（6 款预设 + 自己上传图片）都能调～';
     return '这个问题我还在学习中～你可以换个问法，或者问我这些：博主介绍、前端学习（CSS/React/Vite）、Python、Excel 数据处理、竞赛经验。也可以去"问答"区留言，博主会来回复的～';
   }
+  var history=[];
   function send(){
     var q=input.value.trim(); if(!q)return;
     input.value=''; addMsg(q,'me');
@@ -2149,13 +2208,13 @@ window.addEventListener('load', function(){ setTimeout(typeLoop, 200); });
       .then(function(t){
         var ans=(t||'').trim();
         if(!ans||ans.indexOf('Turnstile')>=0||ans.indexOf('error')===0)throw new Error('bad');
-        thinking.textContent=ans;
-        history.push({me:q,ai:ans});
+        thinking.textContent=ans; thinking.style.fontSize=curFs+'px'; thinking.style.lineHeight=(curFs*1.65)+'px';
+        history.push({me:q,ai:ans}); saveHistory();
       })
       .catch(function(){
         var ans=localBrain(q);
-        thinking.textContent=ans;
-        history.push({me:q,ai:ans});
+        thinking.textContent=ans; thinking.style.fontSize=curFs+'px'; thinking.style.lineHeight=(curFs*1.65)+'px';
+        history.push({me:q,ai:ans}); saveHistory();
       });
   }
   $('#aiSend').addEventListener('click',send);
