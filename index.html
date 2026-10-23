@@ -97,7 +97,7 @@ input{font-family:inherit}
 
 .sidebar{display:flex;flex-direction:column;gap:24px;position:sticky;top:88px;align-self:start}
 .widget{background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:22px;box-shadow:var(--shadow)}
-.widget h3{font-family:var(--serif);font-size:16px;font-weight:700;color:var(--navy);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.widget h3{font-family:var(--serif);font-size:19px;font-weight:700;color:var(--navy);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--line)}
 .tag-list{display:flex;flex-wrap:wrap;gap:8px}
 .tag-list a{padding:5px 12px;border-radius:999px;font-size:13px;background:var(--bg-sub);color:var(--ink-soft);transition:all .15s;cursor:pointer}
 .tag-list a:hover{background:var(--amber-soft);color:var(--amber)}
@@ -148,7 +148,7 @@ input{font-family:inherit}
 .cat-card .num{font-family:var(--mono);font-size:13px;color:var(--ink-faint)}
 
 .about-page{max-width:680px;margin:0 auto;padding:48px 24px 80px}
-.about-page h1{font-family:var(--serif);font-size:36px;font-weight:900;color:var(--navy);margin-bottom:24px}
+.about-page h1{font-family:var(--serif);font-size:42px;font-weight:900;color:var(--navy);margin-bottom:24px}
 .about-page p{font-size:16px;line-height:1.9;color:var(--ink-soft);margin-bottom:16px}
 
 .footer{border-top:1px solid var(--line);background:#0E2238;color:#9AB0C4;margin-top:40px}
@@ -1697,18 +1697,18 @@ function renderMyFeedback(){
   box.innerHTML=fb.slice().reverse().map(function(r){
     const d=new Date(r.ts);
     const rep=(window._fbReplies&&window._fbReplies[r.id])||'';
-    return '<div style="border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px">'
+    return '<div style="border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:12px">'
       +'<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">'
-      +'<span style="background:var(--bg-sub);color:var(--navy);font-size:12px;padding:2px 10px;border-radius:999px">'+r.type+'</span>'
-      +(rep?'<span style="font-size:12px;color:#2e7d32;font-weight:600">已回复</span>':'<span style="font-size:12px;color:var(--ink-faint)">已提交</span>')
+      +'<span style="background:var(--bg-sub);color:var(--navy);font-size:14px;padding:3px 12px;border-radius:999px">'+r.type+'</span>'
+      +(rep?'<span style="font-size:14px;color:#2e7d32;font-weight:600">已回复</span>':'<span style="font-size:14px;color:var(--ink-faint)">已提交</span>')
       +'</div>'
-      +'<p style="margin:8px 0 4px;font-size:14px;white-space:pre-wrap;word-break:break-word">'+esc(r.content)+'</p>'
-      +(r.contact?'<div style="font-size:12px;color:var(--ink-faint)">联系方式：'+esc(r.contact)+'</div>':'')
-      +(r.files?'<div style="font-size:12px;color:var(--ink-faint)">附件 '+r.files+' 个</div>':'')
-      +'<div style="font-size:12px;color:var(--ink-faint);margin-top:4px">'+d.toLocaleString('zh-CN')+' · 编号 '+r.id+'</div>'
-      +(rep?'<div style="margin-top:10px;background:rgba(76,175,80,.08);border-left:3px solid #4caf50;padding:8px 12px;border-radius:6px;font-size:13px"><b style="color:#2e7d32">博主回复：</b>'+esc(rep)+'</div>':'')
-      +(window._fbAdmin?'<div style="margin-top:10px"><textarea id="rep_'+r.id+'" rows="2" style="width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:8px;padding:8px;font-size:13px;font-family:inherit" placeholder="写下你的回复，保存后访客刷新即可看到...">'+esc((window._fbReplies||{})[r.id]||'')+'</textarea><div style="margin-top:6px;text-align:right"><button class="save-btn" data-fbsave="'+r.id+'" style="padding:6px 14px;font-size:12px;margin:0">保存回复</button></div></div>':'')
-      +'<div style="margin-top:8px;text-align:right"><span data-fbdel="'+r.id+'" style="font-size:12px;color:#c0392b;cursor:pointer;opacity:.75">删除</span></div>'
+      +'<p style="margin:10px 0 6px;font-size:16px;line-height:1.6;white-space:pre-wrap;word-break:break-word">'+esc(r.content)+'</p>'
+      +(r.contact?'<div style="font-size:14px;color:var(--ink-faint)">联系方式：'+esc(r.contact)+'</div>':'')
+      +(r.files?'<div style="font-size:14px;color:var(--ink-faint)">附件 '+r.files+' 个</div>':'')
+      +'<div style="font-size:14px;color:var(--ink-faint);margin-top:4px">'+d.toLocaleString('zh-CN')+' · 编号 '+r.id+'</div>'
+      +(rep?'<div style="margin-top:12px;background:rgba(76,175,80,.08);border-left:3px solid #4caf50;padding:10px 14px;border-radius:6px;font-size:15px;line-height:1.6"><b style="color:#2e7d32">博主回复：</b>'+esc(rep)+'</div>':'')
+      +(window._fbAdmin?'<div style="margin-top:12px"><textarea id="rep_'+r.id+'" rows="2" style="width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:8px;padding:10px;font-size:15px;font-family:inherit" placeholder="写下你的回复，保存后访客刷新即可看到...">'+esc((window._fbReplies||{})[r.id]||'')+'</textarea><div style="margin-top:8px;text-align:right"><button class="save-btn" data-fbsave="'+r.id+'" style="padding:8px 18px;font-size:14px;margin:0">保存回复</button></div></div>':'')
+      +'<div style="margin-top:10px;text-align:right"><span data-fbdel="'+r.id+'" style="font-size:14px;color:#c0392b;cursor:pointer;opacity:.75">删除</span></div>'
       +'</div>';
   }).join('');
   $$('#myFeedbackList [data-fbsave]').forEach(function(b){
@@ -1776,7 +1776,7 @@ function toggleAdminFb(){
   const bx=$('#fbAdminBox'); if(!bx) return;
   bx.style.display=window._fbAdmin?'block':'none';
   if(window._fbAdmin){
-    bx.innerHTML='<div style="font-size:12px;color:var(--ink-faint);margin-bottom:10px;padding:10px 12px;background:var(--bg-sub);border-radius:8px">博主模式：在每条反馈下方直接写回复并保存，访客刷新后即可看到。首次使用需粘贴 GitHub 令牌，令牌只保存在你自己的浏览器里。<b style="color:#c0392b">如果提示 401，点「清空重填」后重新完整粘贴一次。</b><div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><input id="ghTokenInput" type="text" placeholder="粘贴 ghp_ 开头的令牌（明文可见，方便检查）" style="flex:1;min-width:200px;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12px;font-family:monospace"><button id="ghTokenClear" style="background:none;border:1px solid var(--line);color:var(--ink-faint);padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;white-space:nowrap">清空重填</button><button id="ghTokenSave" class="save-btn" style="padding:8px 14px;font-size:12px;margin:0">保存令牌</button></div></div>';
+    bx.innerHTML='<div style="font-size:14px;color:var(--ink-faint);margin-bottom:12px;padding:12px 14px;background:var(--bg-sub);border-radius:8px;line-height:1.6">博主模式：在每条反馈下方直接写回复并保存，访客刷新后即可看到。首次使用需粘贴 GitHub 令牌，令牌只保存在你自己的浏览器里。<b style="color:#c0392b">如果提示 401，点「清空重填」后重新完整粘贴一次。</b><div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><input id="ghTokenInput" type="text" placeholder="粘贴 ghp_ 开头的令牌（明文可见，方便检查）" style="flex:1;min-width:200px;border:1px solid var(--line);border-radius:8px;padding:10px;font-size:14px;font-family:monospace"><button id="ghTokenClear" style="background:none;border:1px solid var(--line);color:var(--ink-faint);padding:10px 14px;border-radius:8px;cursor:pointer;font-size:14px;white-space:nowrap">清空重填</button><button id="ghTokenSave" class="save-btn" style="padding:10px 16px;font-size:14px;margin:0">保存令牌</button></div></div>';
     $('#ghTokenInput').value=localStorage.getItem('fb_ghToken')||'';
     $('#ghTokenClear').addEventListener('click',function(){
       localStorage.removeItem('fb_ghToken');
@@ -1947,9 +1947,9 @@ function renderProfile(){
   // 右栏：统计卡片 + 图表 + 近 7 天阅读 + 浏览历史 + 我的反馈
   const us=$('#userStats');
   if(us) us.innerHTML=renderUserStats()+
-    '<div style="background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:24px"><h3 style="font-family:var(--serif);color:var(--navy);margin-bottom:12px">近 7 天阅读</h3>'+chartHtml+'</div>'+
-    '<div style="background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:24px"><h3 style="font-family:var(--serif);color:var(--navy);margin-bottom:12px">浏览历史</h3>'+hisHtml+'</div>'+
-    '<div style="background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:24px"><h3 style="font-family:var(--serif);color:var(--navy);margin-bottom:12px">我的反馈<span id="fbAdminToggle" style="float:right;font-size:12px;color:#3b5bdb;cursor:pointer;font-weight:400">博主回复</span></h3><div id="fbAdminBox" style="display:none;margin-bottom:12px"></div><div id="myFeedbackList"></div></div>';
+    '<div style="background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:24px"><h3 style="font-family:var(--serif);color:var(--navy);margin-bottom:14px;font-size:20px">近 7 天阅读</h3>'+chartHtml+'</div>'+
+    '<div style="background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:24px"><h3 style="font-family:var(--serif);color:var(--navy);margin-bottom:14px;font-size:20px">浏览历史</h3>'+hisHtml+'</div>'+
+    '<div style="background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:24px"><h3 style="font-family:var(--serif);color:var(--navy);margin-bottom:14px;font-size:20px">我的反馈<span id="fbAdminToggle" style="float:right;font-size:14px;color:#3b5bdb;cursor:pointer;font-weight:400">博主回复</span></h3><div id="fbAdminBox" style="display:none;margin-bottom:12px"></div><div id="myFeedbackList"></div></div>';
   renderMyFeedback(); loadFbReplies();
   const ftog=$('#fbAdminToggle'); if(ftog) ftog.addEventListener('click',toggleAdminFb);
 
