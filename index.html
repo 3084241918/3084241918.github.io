@@ -1447,9 +1447,10 @@ $('#authForm').addEventListener('submit',function(e){
   if(authMode==='reg'){
     const name=$('#inputName').value.trim();
     const users=getUsers();
-    users.push({name,email,pwd});
+    const newUser={name,email,pwd,createdAt:Date.now()};
+    users.push(newUser);
     saveUsers(users);
-    setCurrent({name,email});
+    setCurrent({...newUser});
     toast('注册成功，欢迎 '+name);
   }else{
     const u=getUsers().find(x=>x.email===email && x.pwd===pwd);
@@ -2021,8 +2022,14 @@ function renderProfile(){
     cur.age=$('#pfAge').value;
     cur.region=$('#pfRegion').value;
     cur.tags=$$('#pfTags .tag-checkbox.checked').map(c=>c.dataset.tag);
-    // 更新 users 数组里的这条
-    const users=getUsers().map(u=>u.email===cur.email?cur:u);
+    // 更新 users 数组里的这条（保留原密码，避免被抹掉导致无法登录）
+    const users=getUsers().map(u=>{
+      if(u.email===cur.email){
+        const saved=u.pwd||cur.pwd;
+        return Object.assign({},u,cur,{pwd:saved});
+      }
+      return u;
+    });
     saveUsers(users); setCurrent(cur);
     renderLoginArea();
     toast('资料已保存');
