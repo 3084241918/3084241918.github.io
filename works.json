@@ -3,14 +3,24 @@
     "name": "晴天遇见枫",
     "url": "https://blog.csdn.net/2601_96964027?type=blog"
   },
-  "updated": "2026-10-22",
+  "updated": "2026-10-26",
   "articles": [
+    {
+      "title": "从零搭一个自己的网页主页：前端初体验的一周",
+      "url": "https://blog.csdn.net/2601_96964027/article/details/168877466",
+      "date": "2026-10-24",
+      "excerpt": "本周开启前端“破冰”之旅，从零开始用HTML搭骨架、CSS美化页面、JavaScript实现交互，并通过TRAE CN与VS Code完成开发。接入博客与数据可视化图表，最终部署至GitHub Pages，获得可访问的个人主页。过程中踩坑不",
+      "views": 217,
+      "diggs": 2,
+      "collects": 3,
+      "comments": 0
+    },
     {
       "title": "FastAPI 学习笔记｜搞懂两种接口请求方式",
       "url": "https://blog.csdn.net/2601_96964027/article/details/168026652",
       "date": "2026-10-17",
       "excerpt": "本周学习FastAPI，掌握GET与POST接口核心区别：GET通过网址传参，适合公开查询，浏览器可直接访问；POST隐藏参数，更安全且支持大容量数据，需通过/docs测试。重点踩坑：代码修改后必须重启服务，否则无效；POST数据需解析为字",
-      "views": 276,
+      "views": 280,
       "diggs": 4,
       "collects": 8,
       "comments": 0
@@ -20,7 +30,7 @@
       "url": "https://blog.csdn.net/2601_96964027/article/details/166833982",
       "date": "2026-09-30",
       "excerpt": "本文系统讲解了Python异常处理的核心概念与实践。通过try-except捕获运行时错误（如ValueError、ZeroDivisionError），避免程序崩溃，提升健壮性。结合else（无错时执行）和finally（无论是否出错都执",
-      "views": 165,
+      "views": 166,
       "diggs": 5,
       "collects": 4,
       "comments": 0
@@ -40,7 +50,7 @@
       "url": "https://blog.csdn.net/2601_96964027/article/details/165739879",
       "date": "2026-09-17",
       "excerpt": "Python 学习笔记 — 列表 list 的增删改查",
-      "views": 53,
+      "views": 54,
       "diggs": 2,
       "collects": 3,
       "comments": 0
@@ -50,7 +60,7 @@
       "url": "https://blog.csdn.net/2601_96964027/article/details/165123636",
       "date": "2026-09-12",
       "excerpt": "本文系统讲解Python while循环的核心原理与实操技巧，强调“初始化、条件判断、变量更新”三步法，避免死循环。结合素数判断与1~10求和两个练习，巩固循环逻辑，并复盘常见错误：缩进问题、%与//混淆、标记变量位置不当。通过原理梳理与代",
-      "views": 254,
+      "views": 255,
       "diggs": 2,
       "collects": 6,
       "comments": 0
