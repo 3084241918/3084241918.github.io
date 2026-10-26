@@ -1460,6 +1460,7 @@ $('#authForm').addEventListener('submit',function(e){
   }
   closeAuth();
   renderLoginArea();
+  if($('#view-profile').classList.contains('active')) renderProfile();
 });
 $('#modalClose').addEventListener('click',closeAuth);
 $('#authModal').addEventListener('click',function(e){ if(e.target===this) closeAuth() });
@@ -1675,10 +1676,10 @@ $('#feedbackForm').addEventListener('submit',function(e){
   e.preventDefault();
   const c=$('#fbContent').value.trim();
   if(c.length<5){ $('#fbContentErr').textContent='请至少写 5 个字'; return }
-  let fb=[]; try{fb=JSON.parse(localStorage.getItem('fb_feedback')||'[]')}catch(e){}
+  const fb=getFeedback();
   const rec={id:'fb_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),type:$('#fbType').value,content:c,contact:$('#fbContact').value,files:fbFiles.length,ts:Date.now()};
   fb.push(rec);
-  localStorage.setItem('fb_feedback',JSON.stringify(fb));
+  setFeedback(fb);
   if(FEEDBACK_EMAIL){
     const mail={_captcha:'false',_template:'table',_subject:'博客收到新反馈：'+rec.type+'（'+rec.id+'）',反馈编号:rec.id,反馈类型:rec.type,详细内容:c,联系方式:rec.contact||'未填写',附件数量:fbFiles.length,提交时间:new Date().toLocaleString('zh-CN')};
     if(/@/.test(rec.contact||'')) mail._replyto=rec.contact; // 访客留了邮箱时，博主在邮箱里点“回复”即可直接回信
@@ -1696,12 +1697,31 @@ $('#feedbackForm').addEventListener('submit',function(e){
   this.reset(); fbFiles=[]; $('#fbPreview').innerHTML='';
   if($('#view-profile').classList.contains('active')) renderProfile();
 });
+/* 反馈记录按账号隔离：登录用户各存各的，未登录的存到 anon */
+function fbKey(){ const u=getCurrent(); return 'fb_feedback_'+(u&&u.email?u.email:'anon') }
+function getFeedback(){
+  let fb=[]; try{ fb=JSON.parse(localStorage.getItem(fbKey())||'[]') }catch(e){}
+  // 补全历史记录缺失的编号，避免显示「编号 undefined」
+  let changed=false;
+  fb=fb.map(function(r){ if(!r.id){ r.id='fb_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); changed=true } return r });
+  if(changed) setFeedback(fb);
+  return fb;
+}
+function setFeedback(fb){ localStorage.setItem(fbKey(),JSON.stringify(fb)) }
+// 一次性迁移：早期版本把反馈存在全局 key 里，统一归到 anon，不再串到新账号
+function migrateFeedback(){
+  const old=localStorage.getItem('fb_feedback');
+  if(!old) return;
+  const ak='fb_feedback_anon';
+  if(!localStorage.getItem(ak)) localStorage.setItem(ak,old);
+  localStorage.removeItem('fb_feedback');
+}
 /* ============ 我的反馈记录（含博主回复） ============ */
 window._fbReplies={};
 function renderMyFeedback(){
   const box=document.getElementById('myFeedbackList'); if(!box) return;
-  let fb=[]; try{fb=JSON.parse(localStorage.getItem('fb_feedback')||'[]')}catch(e){}
-  if(!fb.length){ box.innerHTML='<p style="color:var(--ink-faint);font-size:13px;margin:0">还没有提交过反馈，点击导航栏「反馈」按钮可以提建议哦。</p>'; return }
+  const fb=getFeedback();
+  if(!fb.length){ box.innerHTML='<p style="color:var(--ink-faint);font-size:13px;margin:0">本账号还没有提交过反馈，点击导航栏「反馈」按钮可以提建议哦。</p>'; return }
   box.innerHTML=fb.slice().reverse().map(function(r){
     const d=new Date(r.ts);
     const rep=(window._fbReplies&&window._fbReplies[r.id])||'';
@@ -1732,9 +1752,7 @@ function renderMyFeedback(){
     el.addEventListener('click',function(){
       const id=el.getAttribute('data-fbdel');
       if(!confirm('确定删除这条反馈记录吗？（仅删除本机记录，不影响其他访客）')) return;
-      let fb=[]; try{fb=JSON.parse(localStorage.getItem('fb_feedback')||'[]')}catch(e){}
-      fb=fb.filter(function(x){return x.id!==id});
-      localStorage.setItem('fb_feedback',JSON.stringify(fb));
+      setFeedback(getFeedback().filter(function(x){return x.id!==id}));
       renderMyFeedback(); toast('已删除这条反馈记录');
     });
   });
@@ -2109,6 +2127,7 @@ $('#qaSubmit')&&($('#qaSubmit').onclick=()=>{
   setData('fb_qa',list); $('#qaInput').value=''; renderQA(); toast('问题已发布');
 });
 
+try{ migrateFeedback(); }catch(e){ console.error('migrateFeedback',e); }
 try{ renderLoginArea(); }catch(e){ console.error('loginArea',e); }
 try{ applySettings(getSettings()); }catch(e){ console.error('settings',e); }
 try{ navigate(); }catch(e){ console.error('navigate',e); }
