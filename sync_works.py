@@ -1,24 +1,29 @@
 # -*- coding: utf-8 -*-
-"""Fetch the CSDN blog RSS feed and regenerate works.json.
+"""Fetch CSDN blog articles via the community API and regenerate works.json.
+
+Primary source: CSDN get-business-list API (returns title/url/desc/date + all stats).
+Fallback: scrape the blog list page HTML.
 Stdlib only. Run by GitHub Actions daily; safe to fail (keeps old file)."""
 import json
 import re
 import sys
 import urllib.request
-import xml.etree.ElementTree as ET
+import urllib.parse
 from datetime import date
-from email.utils import parsedate_to_datetime
 
-RSS = "https://blog.csdn.net/2601_96964027/rss/list"
-BLOG_URL = "https://blog.csdn.net/2601_96964027?type=blog"
+USERNAME = "2601_96964027"
+BLOG_URL = f"https://blog.csdn.net/{USERNAME}?type=blog"
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
 
-# 依次尝试多个抓取源：CSDN 会屏蔽部分机房 IP，代理源可绕过
-SOURCES = [
-    ("xml", RSS),
-    ("xml", "https://api.allorigins.win/raw?url=" + urllib.parse.quote(RSS, safe="")),
-    ("xml", "https://corsproxy.io/?url=" + urllib.parse.quote(RSS, safe="")),
-    ("json", "https://api.rss2json.com/v1/api.json?rss_url=" + urllib.parse.quote(RSS, safe="")),
+API = (f"https://blog.csdn.net/community/home-api/v1/get-business-list"
+       f"?page=1&size=50&businessType=blog&orderby=&noOverSelf=false&username={USERNAME}")
+
+# 代理源（CSDN 会屏蔽部分机房 IP，代理可绕过）
+PROXIES = [
+    lambda u: u,  # 直连
+    lambda u: "https://api.allorigins.win/raw?url=" + urllib.parse.quote(u, safe=""),
+    lambda u: "https://corsproxy.io/?url=" + urllib.parse.quote(u, safe=""),
+    lambda u: "https://api.codetabs.com/v1/proxy?quest=" + urllib.parse.quote(u, safe=""),
 ]
 
 
@@ -27,92 +32,80 @@ def clean(html):
     return re.sub(r"\s+", " ", txt).strip()
 
 
-def parse_date(pub):
-    try:
-        return parsedate_to_datetime(pub).strftime("%Y-%m-%d")
-    except Exception:
-        return (pub or "")[:10]
+def parse_date(s):
+    return (s or "")[:10]
 
 
-def parse_xml(raw):
-    root = ET.fromstring(raw)
-    out = []
-    for item in root.iter("item"):
-        title = (item.findtext("title") or "").strip()
-        link = (item.findtext("link") or "").strip()
-        if title and link:
-            out.append({"title": title, "url": link,
-                        "date": parse_date(item.findtext("pubDate")),
-                        "excerpt": clean(item.findtext("description"))[:120]})
-    return out
-
-
-def parse_json(raw):
-    data = json.loads(raw.decode("utf-8"))
-    out = []
-    for it in data.get("items") or []:
-        title = (it.get("title") or "").strip()
-        link = (it.get("link") or "").strip()
-        if title and link:
-            out.append({"title": title, "url": link,
-                        "date": parse_date(it.get("pubDate")),
-                        "excerpt": clean(it.get("description"))[:120]})
-    return out
-
-
-def fetch_articles():
-    for kind, url in SOURCES:
-        try:
-            req = urllib.request.Request(url, headers=UA)
-            raw = urllib.request.urlopen(req, timeout=40).read()
-            arts = parse_json(raw) if kind == "json" else parse_xml(raw)
-            if arts:
-                print("source ok:", url.split("?")[0])
-                return arts
-            print("source empty:", url.split("?")[0])
-        except Exception as e:
-            print("source failed:", url.split("?")[0], type(e).__name__, str(e)[:100])
-    return []
-
-
-def fetch_stats():
-    """抓取每篇文章的阅读/点赞/收藏/评论数，失败返回空 dict（不影响主流程）。"""
-    api = ("https://blog.csdn.net/community/home-api/v1/get-business-list"
-           "?page=1&size=50&businessType=blog&orderby=&noOverSelf=false"
-           "&username=2601_96964027")
-    urls = [api,
-            "https://api.allorigins.win/raw?url=" + urllib.parse.quote(api, safe=""),
-            "https://corsproxy.io/?url=" + urllib.parse.quote(api, safe="")]
-    hdrs = {"User-Agent": UA["User-Agent"], "Referer": BLOG_URL}
-    for url in urls:
+def fetch_via_api():
+    """用 CSDN get-business-list API 抓取文章 + 统计数据。"""
+    hdrs = dict(UA)
+    hdrs["Referer"] = BLOG_URL
+    for proxy in PROXIES:
+        url = proxy(API)
         try:
             req = urllib.request.Request(url, headers=hdrs)
             data = json.loads(urllib.request.urlopen(req, timeout=40).read().decode("utf-8"))
-            out = {}
+            out = []
             for it in ((data.get("data") or {}).get("list")) or []:
-                u = it.get("url") or ""
-                if u:
-                    out[u] = {"views": it.get("viewCount") or 0,
-                              "diggs": it.get("diggCount") or 0,
-                              "collects": it.get("collectCount") or 0,
-                              "comments": it.get("commentCount") or 0}
+                title = (it.get("title") or "").strip()
+                link = (it.get("url") or "").strip()
+                if not (title and link):
+                    continue
+                out.append({
+                    "title": title,
+                    "url": link,
+                    "date": parse_date(it.get("postTime")),
+                    "excerpt": clean(it.get("description"))[:120],
+                    "views": it.get("viewCount") or 0,
+                    "diggs": it.get("diggCount") or 0,
+                    "collects": it.get("collectCount") or 0,
+                    "comments": it.get("commentCount") or 0,
+                })
             if out:
-                print("stats ok:", url.split("?")[0])
+                print("api ok:", url.split("?")[0], "articles:", len(out))
                 return out
+            print("api empty:", url.split("?")[0])
         except Exception as e:
-            print("stats failed:", url.split("?")[0], type(e).__name__, str(e)[:80])
-    return {}
+            print("api failed:", url.split("?")[0], type(e).__name__, str(e)[:100])
+    return []
+
+
+def fetch_via_html():
+    """备用：直接抓取博客列表页 HTML 解析文章（无统计数据）。"""
+    hdrs = dict(UA)
+    hdrs["Accept"] = "text/html,application/xhtml+xml"
+    for proxy in PROXIES:
+        url = proxy(BLOG_URL)
+        try:
+            req = urllib.request.Request(url, headers=hdrs)
+            raw = urllib.request.urlopen(req, timeout=40).read().decode("utf-8", "ignore")
+            links = re.findall(rf'https://blog\.csdn\.net/{USERNAME}/article/details/\d+', raw)
+            # 去重保持顺序
+            seen, out = set(), []
+            for l in links:
+                if l in seen:
+                    continue
+                seen.add(l)
+                # 尝试从链接附近提取标题
+                m = re.search(r'href="' + re.escape(l) + r'"[^>]*>([^<]{2,80})<', raw)
+                title = clean(m.group(1)) if m else "未命名文章"
+                out.append({"title": title, "url": l, "date": "", "excerpt": "",
+                            "views": 0, "diggs": 0, "collects": 0, "comments": 0})
+            if out:
+                print("html ok:", url.split("?")[0], "articles:", len(out))
+                return out
+            print("html empty:", url.split("?")[0])
+        except Exception as e:
+            print("html failed:", url.split("?")[0], type(e).__name__, str(e)[:100])
+    return []
 
 
 def main():
-    articles = fetch_articles()
+    articles = fetch_via_api()
+    if not articles:
+        articles = fetch_via_html()
     if not articles:
         sys.exit("no articles parsed; keep existing works.json")
-    stats = fetch_stats()
-    for a in articles:
-        s = stats.get(a["url"])
-        if s:
-            a.update(s)
     data = {
         "blog": {"name": "晴天遇见枫", "url": BLOG_URL},
         "updated": date.today().isoformat(),
