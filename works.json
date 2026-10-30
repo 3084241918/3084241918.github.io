@@ -3,14 +3,14 @@
     "name": "晴天遇见枫",
     "url": "https://blog.csdn.net/2601_96964027?type=blog"
   },
-  "updated": "2026-10-29",
+  "updated": "2026-10-30",
   "articles": [
     {
       "title": "从零搭一个自己的网页主页：前端初体验的一周",
       "url": "https://blog.csdn.net/2601_96964027/article/details/168877466",
       "date": "2026-10-24",
       "excerpt": "本周开启前端“破冰”之旅，从零开始用HTML搭骨架、CSS美化页面、JavaScript实现交互，并通过TRAE CN与VS Code完成开发。接入博客与数据可视化图表，最终部署至GitHub Pages，获得可访问的个人主页。过程中踩坑不",
-      "views": 224,
+      "views": 225,
       "diggs": 2,
       "collects": 4,
       "comments": 0
@@ -40,7 +40,7 @@
       "url": "https://blog.csdn.net/2601_96964027/article/details/166734162",
       "date": "2026-09-27",
       "excerpt": "定义函数print(\"你好\")# 调用函数，执行里面代码hello()例子 2：带一个参数print(f\"name } ，欢迎回来\") greet(\"老李\")name } ，欢迎回来\") greet(\"老李\")",
-      "views": 146,
+      "views": 147,
       "diggs": 5,
       "collects": 5,
       "comments": 0
