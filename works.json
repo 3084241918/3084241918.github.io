@@ -3,14 +3,24 @@
     "name": "晴天遇见枫",
     "url": "https://blog.csdn.net/2601_96964027?type=blog"
   },
-  "updated": "2026-11-07",
+  "updated": "2026-11-08",
   "articles": [
+    {
+      "title": "【SignMate 手之声｜无障碍手语平台项目复盘】",
+      "url": "https://blog.csdn.net/2601_96964027/article/details/170245457",
+      "date": "2026-11-07",
+      "excerpt": "项目二聚焦无障碍手语平台SignMate，面向听障群体设计实时翻译、3D教学、手语课堂与便民服务四大模块。团队通过需求拆解、数据库建模与模块协作，实现2000+词汇库与60fps低延迟渲染。在跨组协作中，强化了需求理解与沟通效率，也意识到技",
+      "views": 174,
+      "diggs": 2,
+      "collects": 2,
+      "comments": 0
+    },
     {
       "title": "【MySQL 数据库｜本周学习记录】",
       "url": "https://blog.csdn.net/2601_96964027/article/details/169562243",
       "date": "2026-10-31",
       "excerpt": "本文系统梳理了MySQL学习核心内容：从数据库基础、ER图设计、SQL查询（含多表联查、约束、事务）到Python PyMySQL对接。强调“先设计表再写查询”的实践原则，总结高频易错点（如IS NULL、AND/OR优先级），提出“手写验",
-      "views": 264,
+      "views": 267,
       "diggs": 5,
       "collects": 5,
       "comments": 0
@@ -70,7 +80,7 @@
       "url": "https://blog.csdn.net/2601_96964027/article/details/165123636",
       "date": "2026-09-12",
       "excerpt": "本文系统讲解Python while循环的核心原理与实操技巧，强调“初始化、条件判断、变量更新”三步法，避免死循环。结合素数判断与1~10求和两个练习，巩固循环逻辑，并复盘常见错误：缩进问题、%与//混淆、标记变量位置不当。通过原理梳理与代",
-      "views": 257,
+      "views": 258,
       "diggs": 2,
       "collects": 6,
       "comments": 0
