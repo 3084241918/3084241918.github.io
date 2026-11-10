@@ -3,14 +3,14 @@
     "name": "晴天遇见枫",
     "url": "https://blog.csdn.net/2601_96964027?type=blog"
   },
-  "updated": "2026-11-09",
+  "updated": "2026-11-10",
   "articles": [
     {
       "title": "【SignMate 手之声｜无障碍手语平台项目复盘】",
       "url": "https://blog.csdn.net/2601_96964027/article/details/170245457",
       "date": "2026-11-07",
       "excerpt": "项目二聚焦无障碍手语平台SignMate，面向听障群体设计实时翻译、3D教学、手语课堂与便民服务四大模块。团队通过需求拆解、数据库建模与模块协作，实现2000+词汇库与60fps低延迟渲染。在跨组协作中，强化了需求理解与沟通效率，也意识到技",
-      "views": 194,
+      "views": 195,
       "diggs": 3,
       "collects": 4,
       "comments": 0
@@ -30,7 +30,7 @@
       "url": "https://blog.csdn.net/2601_96964027/article/details/168877466",
       "date": "2026-10-24",
       "excerpt": "本周开启前端“破冰”之旅，从零开始用HTML搭骨架、CSS美化页面、JavaScript实现交互，并通过TRAE CN与VS Code完成开发。接入博客与数据可视化图表，最终部署至GitHub Pages，获得可访问的个人主页。过程中踩坑不",
-      "views": 234,
+      "views": 235,
       "diggs": 2,
       "collects": 4,
       "comments": 0
