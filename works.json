@@ -3,14 +3,14 @@
     "name": "晴天遇见枫",
     "url": "https://blog.csdn.net/2601_96964027?type=blog"
   },
-  "updated": "2026-11-11",
+  "updated": "2026-11-12",
   "articles": [
     {
       "title": "【SignMate 手之声｜无障碍手语平台项目复盘】",
       "url": "https://blog.csdn.net/2601_96964027/article/details/170245457",
       "date": "2026-11-07",
       "excerpt": "项目二聚焦无障碍手语平台SignMate，面向听障群体设计实时翻译、3D教学、手语课堂与便民服务四大模块。团队通过需求拆解、数据库建模与模块协作，实现2000+词汇库与60fps低延迟渲染。在跨组协作中，强化了需求理解与沟通效率，也意识到技",
-      "views": 196,
+      "views": 197,
       "diggs": 3,
       "collects": 4,
       "comments": 0
@@ -40,7 +40,7 @@
       "url": "https://blog.csdn.net/2601_96964027/article/details/168026652",
       "date": "2026-10-17",
       "excerpt": "本周学习FastAPI，掌握GET与POST接口核心区别：GET通过网址传参，适合公开查询，浏览器可直接访问；POST隐藏参数，更安全且支持大容量数据，需通过/docs测试。重点踩坑：代码修改后必须重启服务，否则无效；POST数据需解析为字",
-      "views": 281,
+      "views": 282,
       "diggs": 4,
       "collects": 9,
       "comments": 0
