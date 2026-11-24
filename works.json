@@ -3,16 +3,16 @@
     "name": "晴天遇见枫",
     "url": "https://blog.csdn.net/2601_96964027?type=blog"
   },
-  "updated": "2026-11-23",
+  "updated": "2026-11-24",
   "articles": [
     {
       "title": "软件测试入门｜等价类划分法，新手写用例最实用的方法",
       "url": "https://blog.csdn.net/2601_96964027/article/details/171197239",
       "date": "2026-11-22",
       "excerpt": "等价类划分是测试用例设计的基础方法，通过将输入数据分为有效与无效等价类，实现高效覆盖。以密码输入框为例，根据长度（6-16位）和字符类型（仅字母数字）规则，划分为5个等价类，每类选一条代表数据测试。该方法避免重复测试，确保边界与异常场景不遗",
-      "views": 286,
+      "views": 293,
       "diggs": 2,
-      "collects": 3,
+      "collects": 5,
       "comments": 0
     },
     {
@@ -20,7 +20,7 @@
       "url": "https://blog.csdn.net/2601_96964027/article/details/170777499",
       "date": "2026-11-14",
       "excerpt": "排查代码错误的核心是“先缩小范围，再动手改”。应遵循五步流程：读报错定位真因、打印变量确认输入、用二分法快速定位、构建最小复现案例、单点修改验证假设。避免盲目重写代码，重点区分类型、空值与环境问题，每次踩坑后沉淀经验清单，逐步提升排查效率。",
-      "views": 141,
+      "views": 142,
       "diggs": 4,
       "collects": 5,
       "comments": 0
@@ -50,7 +50,7 @@
       "url": "https://blog.csdn.net/2601_96964027/article/details/168877466",
       "date": "2026-10-24",
       "excerpt": "本周开启前端“破冰”之旅，从零开始用HTML搭骨架、CSS美化页面、JavaScript实现交互，并通过TRAE CN与VS Code完成开发。接入博客与数据可视化图表，最终部署至GitHub Pages，获得可访问的个人主页。过程中踩坑不",
-      "views": 249,
+      "views": 251,
       "diggs": 2,
       "collects": 4,
       "comments": 0
@@ -90,7 +90,7 @@
       "url": "https://blog.csdn.net/2601_96964027/article/details/165739879",
       "date": "2026-09-17",
       "excerpt": "Python 学习笔记 — 列表 list 的增删改查",
-      "views": 56,
+      "views": 57,
       "diggs": 2,
       "collects": 3,
       "comments": 0
